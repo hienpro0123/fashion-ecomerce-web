@@ -1,0 +1,185 @@
+/* =======================
+   FOOTER
+======================= */
+.footer {
+  position: relative;
+  margin-top: $xl-size;
+  background: $off-white;
+  padding: 0 $xxl-size;
+
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont,
+    'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+
+  @include mobile {
+    padding: 2.5rem 1.5rem 0;
+  }
+
+  a {
+    text-decoration: none;
+    color: inherit;
+  }
+}
+
+/* =======================
+   FOOTER CONTENT (4 COL)
+======================= */
+.footer-container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 4rem 0;
+
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 3rem;
+
+  @include mobile {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+}
+
+/* =======================
+   TYPOGRAPHY
+======================= */
+.footer h4 {
+  font-size: 1.4rem;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  margin-bottom: 1rem;
+}
+
+.footer-brand {
+  font-size: 2.6rem;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  margin-bottom: 1rem;
+}
+
+.footer-col p {
+  line-height: 1.7;
+  margin-bottom: 0.8rem;
+  font-size: 1.4rem;
+  font-weight: 400;
+  color: #333;
+}
+
+.footer-col ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.footer-col ul li {
+  margin-bottom: 0.6rem;
+  font-size: 1.4rem;
+  font-weight: 400;
+  cursor: pointer;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+/* =======================
+   NEWSLETTER
+======================= */
+.newsletter {
+  display: flex;
+  margin-top: 1rem;
+
+  @include mobile {
+    flex-direction: column;
+  }
+}
+
+.newsletter input {
+  flex: 1;
+  padding: 0.8rem;
+  border: 1px solid #ccc;
+  font-size: 1.4rem;
+  font-family: 'Inter', sans-serif;
+
+  @include mobile {
+    margin-bottom: 0.8rem;
+  }
+}
+
+.newsletter button {
+  background: #000;
+  color: #fff;
+  border: none;
+  padding: 0.8rem 1.5rem;
+  font-size: 1.4rem;
+  font-weight: 600;
+  font-family: 'Inter', sans-serif;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+}
+
+/* =======================
+   LOGOS (GHN + IUH)
+======================= */
+.shipping-logo {
+  width: 90px;
+  height: auto;
+  max-height: 50px;
+  object-fit: contain;
+  margin-top: 1rem;
+  display: block;
+}
+
+.iuh {
+  width: 80px;
+  height: auto;
+  max-height: 50px;
+  object-fit: contain;
+  margin-top: 1.2rem;
+  display: block;
+}
+
+@include mobile {
+  .shipping-logo,
+  .iuh {
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
+
+/* =======================
+   FOOTER BOTTOM
+======================= */
+.footer-bottom {
+  width: 100%;
+  text-align: center;
+  padding: 1.5rem 0;
+  border-top: 1px solid #ddd;
+  font-size: 1.3rem;
+  font-weight: 400;
+  color: #555;
+}
+
+.footer-cert {
+  margin-top: 1.2rem;
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+
+  @include mobile {
+    justify-content: center;
+  }
+}
+
+.footer-cert span {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #333;
+  line-height: 1.4;
+}
+
+.iuh {
+  width: 42px;
+  height: auto;
+  object-fit: contain;
+}
