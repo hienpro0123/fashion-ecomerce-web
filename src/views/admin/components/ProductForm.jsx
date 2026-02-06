@@ -188,18 +188,19 @@ const ProductForm = ({ product, onSubmit, isLoading }) => {
                 &nbsp;
                 <div className="product-form-field">
                   <CustomCreatableSelect
-                    name="sizes"
-                    iid="sizes"
-                    options={sizeOptions}
-                    isMulti
-                    disabled={isLoading}
-                    placeholder="Select Sizes"
-                    label="* Sizes"
-                    defaultValue={values.sizes.map(size => ({
-                      label: size,
-                      value: size
-                    }))}
-                  />
+                      name="sizes"
+                      iid="sizes"
+                      options={sizeOptions}
+                      isMulti
+                      disabled={isLoading}
+                      placeholder="Select Sizes"
+                      label="* Sizes"
+                      defaultValue={values.sizes.map(size => ({
+                        label: size,
+                        value: size
+                      }))}
+                    />
+
                 </div>
               </div>
               <div className="product-form-field">
