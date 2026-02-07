@@ -78,6 +78,8 @@ const SearchBar = () => {
           type="text"
           value={searchInput}
         />
+        
+
         {filter.recent.length !== 0 && (
           <div className="searchbar-recent">
             <div className="searchbar-recent-header">

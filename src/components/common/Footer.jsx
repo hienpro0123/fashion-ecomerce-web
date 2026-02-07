@@ -20,7 +20,7 @@ const Footer = () => {
 
         {/* COL 1 */}
         <div className="footer-col">
-          <h4>Về LORDMEN</h4>
+          <h4>About LORDMEN</h4>
           <h2 className="footer-brand">LORDMEN</h2>
           <p>
             LORDMEN – Thương hiệu thời trang nam hướng tới sự tối giản,
@@ -31,12 +31,12 @@ const Footer = () => {
 
         {/* COL 2 */}
         <div className="footer-col">
-          <h4>LIÊN HỆ HỢP TÁC</h4>
+          <h4>Business Partnerships</h4>
           <p>Địa chỉ: Gò Vấp, TP. Hồ Chí Minh</p>
           <p>Số điện thoại: 0936 611 611</p>
           <p>Email: contact@lordmen.vn</p>
 
-          <h4 style={{ marginTop: '1.5rem' }}>PHƯƠNG THỨC VẬN CHUYỂN</h4>
+          <h4 style={{ marginTop: '1.5rem' }}>Shipping Methods</h4>
           <img
             className="shipping-logo"
             src={logoGHN}
@@ -46,7 +46,7 @@ const Footer = () => {
 
         {/* COL 3 */}
         <div className="footer-col">
-          <h4>HỖ TRỢ - CHÍNH SÁCH</h4>
+          <h4>Customer Support & Policies</h4>
           <ul>
             <li>Giới thiệu</li>
             <li>Liên hệ</li>
@@ -60,7 +60,7 @@ const Footer = () => {
 
         {/* COL 4 */}
         <div className="footer-col">
-          <h4>ĐĂNG KÝ NHẬN TIN</h4>
+          <h4>Subscribe to Our Newsletter</h4>
           <p>Nhận thông tin sản phẩm mới và ưu đãi đặc biệt.</p>
 
           <div className="newsletter">
@@ -77,7 +77,10 @@ const Footer = () => {
               src={logoIUH}
               alt="Đại Học Công Nghiệp TP.HCM"
             />
-            <span>ĐẠI HỌC CÔNG NGHIỆP TP.HCM</span>
+            <span>
+              Industrial University of <br />
+              Ho Chi Minh City
+            </span>
           </div>
         </div>
 

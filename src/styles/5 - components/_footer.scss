@@ -7,8 +7,7 @@
   background: $off-white;
   padding: 0 $xxl-size;
 
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont,
-    'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  font-family: 'Be Vietnam Pro', sans-serif;
 
   @include mobile {
     padding: 2.5rem 1.5rem 0;
@@ -44,11 +43,12 @@
 ======================= */
 .footer h4 {
   font-size: 1.4rem;
-  font-weight: 700;
-  letter-spacing: 0.8px;
+  font-weight: 600;        // 👈 QUAN TRỌNG
+  letter-spacing: 1.2px;  // tăng spacing để chữ Ê bớt “đập vào mắt”
   text-transform: uppercase;
   margin-bottom: 1rem;
 }
+
 
 .footer-brand {
   font-size: 2.6rem;
@@ -96,6 +96,7 @@
 
 .newsletter input {
   flex: 1;
+  min-width: 0;
   padding: 0.8rem;
   border: 1px solid #ccc;
   font-size: 1.4rem;
