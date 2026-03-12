@@ -53,8 +53,16 @@ BasketItemControl.propTypes = {
     keywords: PropType.arrayOf(PropType.string),
     selectedSize: PropType.string,
     selectedColor: PropType.string,
-    imageCollection: PropType.arrayOf(PropType.string),
-    sizes: PropType.arrayOf(PropType.number),
+    imageCollection: PropType.arrayOf(
+      PropType.oneOfType([
+        PropType.string,
+        PropType.shape({
+          id: PropType.oneOfType([PropType.string, PropType.number]),
+          url: PropType.string
+        })
+      ])
+    ),
+    sizes: PropType.arrayOf(PropType.oneOfType([PropType.number, PropType.string])),
     image: PropType.string,
     imageUrl: PropType.string,
     isFeatured: PropType.bool,

@@ -168,6 +168,18 @@ class Firebase {
     return new Promise((resolve, reject) => {
       (async () => {
         const productsRef = this.db.collection("products");
+        const rawKey = String(searchKey || "").trim();
+        const lowerKey = rawKey.toLowerCase();
+        const keywordTokens = Array.from(
+          new Set(
+            [
+              ...rawKey.split(" "),
+              ...lowerKey.split(" ")
+            ]
+              .map((token) => token.trim())
+              .filter(Boolean)
+          )
+        ).slice(0, 10);
 
         const timeout = setTimeout(() => {
           didTimeout = true;
@@ -177,12 +189,12 @@ class Firebase {
         try {
           const searchedNameRef = productsRef
             .orderBy("name_lower")
-            .where("name_lower", ">=", searchKey)
-            .where("name_lower", "<=", `${searchKey}\uf8ff`)
+            .where("name_lower", ">=", lowerKey)
+            .where("name_lower", "<=", `${lowerKey}\uf8ff`)
             .limit(12);
           const searchedKeywordsRef = productsRef
             .orderBy("dateAdded", "desc")
-            .where("keywords", "array-contains-any", searchKey.split(" "))
+            .where("keywords", "array-contains-any", keywordTokens)
             .limit(12);
 
           // const totalResult = await totalQueryRef.get();

@@ -19,6 +19,18 @@ import { clearProfile, setProfile } from '@/redux/actions/profileActions';
 import { history } from '@/routers/AppRouter';
 import firebase from '@/services/firebase';
 
+const buildLocalProfile = (payload) => ({
+  fullname: payload?.displayName ? payload.displayName : 'User',
+  avatar: payload?.photoURL ? payload.photoURL : defaultAvatar,
+  banner: defaultBanner,
+  email: payload?.email || '',
+  address: '',
+  basket: [],
+  mobile: { data: {} },
+  role: 'USER',
+  dateJoined: payload?.metadata?.creationTime || new Date().getTime()
+});
+
 function* handleError(e) {
   const obj = { success: false, type: 'auth', isError: true };
   yield put(setAuthenticating(false));
@@ -141,48 +153,56 @@ function* authSaga({ type, payload }) {
       break;
     }
     case ON_AUTHSTATE_SUCCESS: {
-      const snapshot = yield call(firebase.getUser, payload.uid);
+      try {
+        const snapshot = yield call(firebase.getUser, payload.uid);
 
-      if (snapshot.data()) { // if user exists in database
-        const user = snapshot.data();
+        if (snapshot.data()) { // if user exists in database
+          const user = snapshot.data();
 
-        yield put(setProfile(user));
-        yield put(setBasketItems(user.basket));
-        yield put(setBasketItems(user.basket));
+          yield put(setProfile(user));
+          yield put(setBasketItems(user.basket));
+          yield put(setBasketItems(user.basket));
+          yield put(signInSuccess({
+            id: payload.uid,
+            role: user.role,
+            provider: payload.providerData[0].providerId
+          }));
+        } else if (payload.providerData[0].providerId !== 'password' && !snapshot.data()) {
+          // add the user if auth provider is not password
+          const user = buildLocalProfile(payload);
+          yield call(firebase.addUser, payload.uid, user);
+          yield put(setProfile(user));
+          yield put(signInSuccess({
+            id: payload.uid,
+            role: user.role,
+            provider: payload.providerData[0].providerId
+          }));
+        }
+
+        yield put(setAuthStatus({
+          success: true,
+          type: 'auth',
+          isError: false,
+          message: 'Successfully signed in. Redirecting...'
+        }));
+        yield put(setAuthenticating(false));
+      } catch (e) {
+        const localProfile = buildLocalProfile(payload);
+        yield put(setProfile(localProfile));
+        yield put(setBasketItems([]));
         yield put(signInSuccess({
           id: payload.uid,
-          role: user.role,
+          role: localProfile.role,
           provider: payload.providerData[0].providerId
         }));
-      } else if (payload.providerData[0].providerId !== 'password' && !snapshot.data()) {
-        // add the user if auth provider is not password
-        const user = {
-          fullname: payload.displayName ? payload.displayName : 'User',
-          avatar: payload.photoURL ? payload.photoURL : defaultAvatar,
-          banner: defaultBanner,
-          email: payload.email,
-          address: '',
-          basket: [],
-          mobile: { data: {} },
-          role: 'USER',
-          dateJoined: payload.metadata.creationTime
-        };
-        yield call(firebase.addUser, payload.uid, user);
-        yield put(setProfile(user));
-        yield put(signInSuccess({
-          id: payload.uid,
-          role: user.role,
-          provider: payload.providerData[0].providerId
+        yield put(setAuthStatus({
+          success: false,
+          type: 'auth',
+          isError: true,
+          message: 'Không đủ quyền truy cập dữ liệu người dùng. Vui lòng kiểm tra Firestore rules.'
         }));
+        yield put(setAuthenticating(false));
       }
-
-      yield put(setAuthStatus({
-        success: true,
-        type: 'auth',
-        isError: false,
-        message: 'Successfully signed in. Redirecting...'
-      }));
-      yield put(setAuthenticating(false));
       break;
     }
     case ON_AUTHSTATE_FAIL: {
