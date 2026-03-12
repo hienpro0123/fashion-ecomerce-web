@@ -10,7 +10,7 @@
 
 ### Git
 
-Git repository: [`ecommerce-react-master` (placeholder for actual remote URL)](https://github.com/hienpro0123/fashion-ecomerce-web/tree/main)
+Git repository: https://github.com/hienpro0123/fashion-ecomerce-web/tree/main
 
 ---
 
