@@ -21,6 +21,36 @@ import {
   searchProductSuccess
 } from '../actions/productActions';
 
+const normalizeText = (value = '') => String(value)
+  .toLowerCase()
+  .normalize('NFD')
+  .replace(/[\u0300-\u036f]/g, '')
+  .replace(/[^a-z0-9\s]/g, ' ')
+  .replace(/\s+/g, ' ')
+  .trim();
+
+const buildKeywordTokens = (input = []) => {
+  const raw = Array.isArray(input) ? input : [input];
+  const tokens = raw
+    .flatMap((item) => normalizeText(item).split(' '))
+    .map((t) => t.trim())
+    .filter(Boolean);
+  return Array.from(new Set(tokens));
+};
+
+const buildKeywords = ({ name, brand, keywords }) => {
+  const base = [
+    name || '',
+    brand || '',
+    ...(Array.isArray(keywords) ? keywords : [])
+  ];
+  const tokens = buildKeywordTokens(base);
+  // Giữ thêm cụm gốc đã normalize để match chính xác theo cụm
+  const phrase = normalizeText(name);
+  const finalList = phrase ? [...tokens, phrase] : tokens;
+  return Array.from(new Set(finalList));
+};
+
 function* initRequest() {
   yield put(setLoading(true));
   yield put(setRequestStatus(null));
@@ -84,6 +114,8 @@ function* productSaga({ type, payload }) {
 
         const product = {
           ...payload,
+          name_lower: String(payload.name || '').toLowerCase(),
+          keywords: buildKeywords(payload),
           image: downloadURL,
           imageCollection: [image, ...images]
         };
@@ -107,6 +139,16 @@ function* productSaga({ type, payload }) {
 
         const { image, imageCollection } = payload.updates;
         let newUpdates = { ...payload.updates };
+        if (typeof newUpdates.name === 'string') {
+          newUpdates = { ...newUpdates, name_lower: newUpdates.name.toLowerCase() };
+        }
+        if (Array.isArray(newUpdates.keywords) || typeof newUpdates.name === 'string' || typeof newUpdates.brand === 'string') {
+          newUpdates = { ...newUpdates, keywords: buildKeywords({
+            name: newUpdates.name || payload.updates?.name,
+            brand: newUpdates.brand || payload.updates?.brand,
+            keywords: newUpdates.keywords || payload.updates?.keywords
+          }) };
+        }
 
         if (image.constructor === File && typeof image === 'object') {
           try {
@@ -183,7 +225,8 @@ function* productSaga({ type, payload }) {
         const result = yield call(firebase.searchProducts, payload.searchKey);
 
         if (result.products.length === 0) {
-          yield handleError({ message: 'No product found.' });
+          yield put(setLoading(false));
+          yield put(setRequestStatus('No product found.'));
           yield put(clearSearchState());
         } else {
           yield put(searchProductSuccess({
