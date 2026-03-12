@@ -3,7 +3,7 @@
 A full‑stack B2C/B2B online shopping application built with React and Firebase. This university project demonstrates a production‑quality front‑end user experience and an administrative dashboard, powered by Firebase services for authentication, data storage, and serverless functions. It also includes an AI‑powered chat assistant (Stylist AI) that helps users search for products using natural language.
 
 **Live Demo:**  
-https://fashion-ecommerce-web.vercel.app
+https://fashion-ecomerce-web.vercel.app/
 
 ---
 
