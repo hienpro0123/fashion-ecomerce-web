@@ -3,31 +3,59 @@
 export const selectFilter = (products, filter) => {
   if (!products || products.length === 0) return [];
 
-  const keyword = filter.keyword.toLowerCase();
+  // helper to normalize strings for case‑ and accent‑insensitive comparison
+  const normalize = (str) => {
+    if (!str) return '';
+    return str
+      .toString()
+      .toLowerCase()
+      .normalize('NFD') // decompose accents
+      .replace(/\p{Diacritic}/gu, '');
+  };
 
-  return products.filter((product) => {
-    const isInRange = filter.maxPrice
-      ? (product.price >= filter.minPrice && product.price <= filter.maxPrice)
-      : true;
-    const matchKeyword = product.keywords ? product.keywords.includes(keyword) : true;
-    // const matchName = product.name ? product.name.toLowerCase().includes(keyword) : true;
-    const matchDescription = product.description
-      ? product.description.toLowerCase().includes(keyword)
-      : true;
-    const matchBrand = product.brand ? product.brand.toLowerCase().includes(filter.brand) : true;
+  const normKeyword = normalize(filter.keyword || '');
 
-    return ((matchKeyword || matchDescription) && matchBrand && isInRange);
-  }).sort((a, b) => {
-    if (filter.sortBy === 'name-desc') {
-      return a.name < b.name ? 1 : -1;
-    } else if (filter.sortBy === 'name-asc') {
-      return a.name > b.name ? 1 : -1;
-    } else if (filter.sortBy === 'price-desc') {
-      return a.price < b.price ? 1 : -1;
-    }
+  return products
+    .filter((product) => {
+      const isInRange = filter.maxPrice
+        ? product.price >= filter.minPrice && product.price <= filter.maxPrice
+        : true;
 
-    return a.price > b.price ? 1 : -1;
-  });
+      // prepare normalized fields
+      const name = normalize(product.name);
+      const description = normalize(product.description);
+      let keywordsList = [];
+      if (product.keywords) {
+        keywordsList = Array.isArray(product.keywords)
+          ? product.keywords.map(normalize)
+          : [normalize(product.keywords)];
+      }
+
+      // if keyword is empty, any product should match the text criteria
+      const matchText = !normKeyword
+        ? true
+        :
+            name.includes(normKeyword) ||
+            description.includes(normKeyword) ||
+            keywordsList.some((k) => k.includes(normKeyword));
+
+      const matchBrand = product.brand
+        ? normalize(product.brand).includes(normalize(filter.brand || ''))
+        : true;
+
+      return matchText && matchBrand && isInRange;
+    })
+    .sort((a, b) => {
+      if (filter.sortBy === 'name-desc') {
+        return a.name < b.name ? 1 : -1;
+      } else if (filter.sortBy === 'name-asc') {
+        return a.name > b.name ? 1 : -1;
+      } else if (filter.sortBy === 'price-desc') {
+        return a.price < b.price ? 1 : -1;
+      }
+
+      return a.price > b.price ? 1 : -1;
+    });
 };
 
 // Select product with highest price

@@ -163,64 +163,61 @@ class Firebase {
   };
 
   searchProducts = (searchKey) => {
+    // normalization helper: lowercase + strip diacritics
+    const normalize = (str) => {
+      if (!str) return '';
+      return str
+        .toString()
+        .toLowerCase()
+        .normalize('NFD')
+        .replace(/\p{Diacritic}/gu, '');
+    };
+
+    const normKey = normalize(searchKey || '');
     let didTimeout = false;
 
     return new Promise((resolve, reject) => {
       (async () => {
-        const productsRef = this.db.collection("products");
+        const productsRef = this.db.collection('products');
 
         const timeout = setTimeout(() => {
           didTimeout = true;
-          reject(new Error("Request timeout, please try again"));
+          reject(new Error('Request timeout, please try again'));
         }, 15000);
 
         try {
-          const searchedNameRef = productsRef
-            .orderBy("name_lower")
-            .where("name_lower", ">=", searchKey)
-            .where("name_lower", "<=", `${searchKey}\uf8ff`)
-            .limit(12);
-          const searchedKeywordsRef = productsRef
-            .orderBy("dateAdded", "desc")
-            .where("keywords", "array-contains-any", searchKey.split(" "))
-            .limit(12);
-
-          // const totalResult = await totalQueryRef.get();
-          const nameSnaps = await searchedNameRef.get();
-          const keywordsSnaps = await searchedKeywordsRef.get();
-          // const total = totalResult.docs.length;
-
+          // pull all products and apply client-side filter for accurate accent- and
+          // partial-search behavior. This simplifies logic and avoids relying on
+          // Firestore string-range queries which are sensitive to diacritics.
+          const allSnaps = await productsRef.get();
           clearTimeout(timeout);
+
           if (!didTimeout) {
-            const searchedNameProducts = [];
-            const searchedKeywordsProducts = [];
-            let lastKey = null;
+            const allProducts = [];
+            allSnaps.forEach((doc) => allProducts.push({ id: doc.id, ...doc.data() }));
 
-            if (!nameSnaps.empty) {
-              nameSnaps.forEach((doc) => {
-                searchedNameProducts.push({ id: doc.id, ...doc.data() });
-              });
-              lastKey = nameSnaps.docs[nameSnaps.docs.length - 1];
-            }
+            const filtered = allProducts.filter((product) => {
+              const name = normalize(product.name);
+              const desc = normalize(product.description);
+              let keywordsList = [];
+              if (product.keywords) {
+                keywordsList = Array.isArray(product.keywords)
+                  ? product.keywords.map(normalize)
+                  : [normalize(product.keywords)];
+              }
 
-            if (!keywordsSnaps.empty) {
-              keywordsSnaps.forEach((doc) => {
-                searchedKeywordsProducts.push({ id: doc.id, ...doc.data() });
-              });
-            }
+              if (!normKey) return true;
 
-            // MERGE PRODUCTS
-            const mergedProducts = [
-              ...searchedNameProducts,
-              ...searchedKeywordsProducts,
-            ];
-            const hash = {};
-
-            mergedProducts.forEach((product) => {
-              hash[product.id] = product;
+              return (
+                name.includes(normKey) ||
+                desc.includes(normKey) ||
+                keywordsList.some((k) => k.includes(normKey))
+              );
             });
 
-            resolve({ products: Object.values(hash), lastKey });
+            // limit to 12 items for consistency with previous behavior
+            const limited = filtered.slice(0, 12);
+            resolve({ products: limited, lastKey: null });
           }
         } catch (e) {
           if (didTimeout) return;
