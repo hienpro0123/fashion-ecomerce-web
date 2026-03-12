@@ -5,9 +5,8 @@
 ### Nhóm
 
 * Thành viên 1: Trịnh Quang Hiên – 23632591  
-* Thành viên 2: …  
-* Thành viên 3: …  
-* Thành viên 4: …
+* Thành viên 2: Huỳnh Võ Tấn Hiên - 23642061
+* Thành viên 3: Võ Khương Duy - 23646941
 
 ### Git
 
