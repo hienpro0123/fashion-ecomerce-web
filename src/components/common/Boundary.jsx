@@ -2,31 +2,37 @@ import PropType from 'prop-types';
 import React, { Component } from 'react';
 
 class Boundary extends Component {
-  static getDerivedStateFromError() {
-    return { hasError: true };
+  static getDerivedStateFromError(error) {
+    return { hasError: true, error };
   }
 
   constructor(props) {
     super(props);
 
     this.state = {
-      hasError: false
+      hasError: false,
+      error: null
     };
   }
 
-
   componentDidCatch(error) {
-    console.log(error);
+    // Log chi tiết lỗi ra console để debug trên Vercel
+    // (console.error vẫn hiển thị trong DevTools)
+    // eslint-disable-next-line no-console
+    console.error(error);
   }
 
   render() {
-    const { hasError } = this.state;
+    const { hasError, error } = this.state;
     const { children } = this.props;
 
     if (hasError) {
       return (
         <div className="loader">
           <h3>:( Something went wrong.</h3>
+          <pre style={{ whiteSpace: 'pre-wrap', fontSize: 12, marginTop: 16 }}>
+            {error && error.toString()}
+          </pre>
         </div>
       );
     }
