@@ -1,65 +1,81 @@
-# LORDMEN | E-commerce react app
-Simple ecommerce react js app with firebase [typescript].
-![Firebase Deploy](https://github.com/jgudo/ecommerce-react/workflows/Firebase%20Deploy/badge.svg)
+# LORDMEN | E-commerce React + Firebase + Stylist AI
 
-### [Live demo](https://LORDMEN-ecommerce.web.app/)
+Ứng dụng e-commerce cho thời trang nam, tích hợp Firebase Firestore + Gemini API và chatbox Stylist AI.
 
-![LORDMEN screenshot](https://raw.githubusercontent.com/jgudo/ecommerce-react/master/static/screeny1.png)
-![LORDMEN screenshot](https://raw.githubusercontent.com/jgudo/ecommerce-react/master/static/screeny2.png)
-![LORDMEN screenshot](https://raw.githubusercontent.com/jgudo/ecommerce-react/master/static/screeny3.png)
-![LORDMEN screenshot](https://raw.githubusercontent.com/jgudo/ecommerce-react/master/static/screeny7.png)
+## Yêu cầu
+- Node.js 16+ (khuyến nghị 18)
+- Firebase project
+- Gemini API key
 
-## Run Locally
-### 1. Install Dependencies
+## Cài đặt
 ```sh
-$ yarn install
+npm install
 ```
 
-### 2. Create a new firebase project
-Login to your google account and create a new firebase project [here](https://console.firebase.google.com/u/0/)
+## Cấu hình môi trường
+Tạo file `.env` ở root dự án:
 
-Create an `.env` file and add the following variables.
+```env
+VITE_FIREBASE_API_KEY=...
+VITE_FIREBASE_AUTH_DOMAIN=...
+VITE_FIREBASE_DB_URL=...
+VITE_FIREBASE_PROJECT_ID=...
+VITE_FIREBASE_STORAGE_BUCKET=...
+VITE_FIREBASE_MSG_SENDER_ID=...
+VITE_FIREBASE_APP_ID=...
 
-```
-// SAMPLE CONFIG .env, you should put the actual config details found on your project settings
-
-VITE_FIREBASE_API_KEY=AIzaKJgkjhSdfSgkjhdkKJdkjowf
-VITE_FIREBASE_AUTH_DOMAIN=yourauthdomin.firebaseapp.com
-VITE_FIREBASE_DB_URL=https://yourdburl.firebaseio.com
-VITE_FIREBASE_PROJECT_ID=yourproject-id
-VITE_FIREBASE_STORAGE_BUCKET=yourstoragebucket.appspot.com
-VITE_FIREBASE_MSG_SENDER_ID=43597918523958
-VITE_FIREBASE_APP_ID=234598789798798fg3-034
-
-``` 
-
-After setting up necessary configuration,
-create a **Database** and choose **Cloud Firestore** and start in test mode
-
-### 3. Run development server
-```sh 
-$ yarn dev
+VITE_GEMINI_API_KEY=...
+#VITE_GEMINI_MODELS=gemini-2.5-flash,gemini-2.0-flash,gemini-1.5-flash
 ```
 
----
+## Firestore rules (tham khảo)
+```js
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // sản phẩm cho mọi người xem
+    match /products/{productId} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
+    // user chỉ sửa dữ liệu của mình
+    match /users/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+  }
+}
 
-## Build the project
+```
+
+## Chạy dev
 ```sh
-$ yarn build
+npm run dev
 ```
 
-## How to add products or perform CRUD operations for Admin
-1. Navigate to your site to `/signup`
-2. Create an account for yourself
-3. Go to your firestore collection `users collection` and edit the account you've just created. Change the role from `USER` to `ADMIN`.
-4. Reload or sigin again to see the changes. 
+## Build
+```sh
+npm run build
+```
 
-**Firebase Admin to be integrated soon**
+## Search không ra kết quả?
+Tìm kiếm dựa vào `name_lower` và `keywords` (token).  
+Data cũ cần migrate để tự sinh `name_lower` và `keywords`.
 
-## Features
+### Migrate bằng Admin SDK
+1. Tải service account JSON từ Firebase Console. (Firebase Console → Project Settings → Service Accounts → Manage keys → Delete key cũ → Generate new key)
+2. Set biến môi trường:
+```sh
+set GOOGLE_APPLICATION_CREDENTIALS=C:\path\service-account.json
+```
+3. Chạy migrate:
+```sh
+npm run migrate:products
+```
 
-* Admin CRUD operations
-* Firebase authentication
-* Firebase auth provider authentication
-* Account creation and edit
+## Lưu ý khi push Git
+Không commit:
+- `.env`, `.env.*`
+- `node_modules/`
+- `dist/`
+- `*adminsdk*.json` (service account private key)
 
