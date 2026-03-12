@@ -1,6 +1,6 @@
 # Modern E-commerce Platform
 
-A full‑stack B2C/B2B online shopping application built with React and Firebase. This university project demonstrates a production‑quality front‑end user experience and an administrative dashboard, powered by Firebase services for authentication, data storage, and serverless functions.
+A full‑stack B2C/B2B online shopping application built with React and Firebase. This university project demonstrates a production‑quality front‑end user experience and an administrative dashboard, powered by Firebase services for authentication, data storage, and serverless functions. It also includes an AI‑powered chat assistant (Stylist AI) that helps users search for products using natural language.
 
 > **Live demo:** (not available in the academic submission)
 
@@ -19,6 +19,7 @@ This project implements a modern e-commerce platform that allows customers to br
 |----------|--------------|---------|
 | **Frontend** | React 17, Vite | Component-driven UI and development tooling |
 | | Redux, Redux Saga, Redux Persist | Global state management and side effects |
+| | Custom AI‑chat logic | In-browser assistant built with streaming message rendering and backend calls to a chat service |
 | | React Router DOM | Client‑side routing |
 | | Formik & Yup | Form handling and validation |
 | | Ant Design Icons, react‑select, react‑modal | UI components & icons |
@@ -37,8 +38,11 @@ This project implements a modern e-commerce platform that allows customers to br
 
 ### Customer Side
 
+* **AI Chat Assistant** – a floating bot widget in the bottom‑right corner that users can open to ask questions in Vietnamese or English; the assistant queries product data and returns recommendations with product cards.
+
+
 * **Product Browsing** – Grid and list views with pagination and featured/recommended sections.
-* **Search & Filter** – Full‑text and keyword search, price range, brand filters, sorting options.
+* **Search & Filter** – Full‑text and keyword search, price range, brand filters, sorting options. Chat assistant also supports natural‑language queries.
 * **Shopping Cart** – Add/remove items, persist basket in Firestore when signed in.
 * **Secure Checkout** – Three‑step process (summary, shipping, payment) with client‑side validation.
 * **User Profile** – View/edit profile, address, and mobile number; placeholder for order history.
@@ -46,6 +50,8 @@ This project implements a modern e-commerce platform that allows customers to br
 ### Admin Dashboard
 
 * **Inventory Management** – Create, read, update, delete (CRUD) products, including images and metadata such as keywords, sizes, colors, featured/recommended flags.
+
+* **Chat widget administration** – Chat logic is purely client‑side; no admin controls exist but the code demonstrates extensible AI integration.
 * **User Management** – Promote normal users to admins by editing the Firestore role field.
 * **Order Tracking** – Placeholder component indicating where order tracking could be implemented.
 * **Revenue Analytics** – Basic subtotal calculations in the checkout flow; full analytics would be an extension.
@@ -54,6 +60,9 @@ This project implements a modern e-commerce platform that allows customers to br
 ---
 
 ## 🗂️ Project Structure
+
+The project follows a conventional React/Vite layout with logical separation by feature and utility. The chat widget sources live under `src/components/chatbox/*` and corresponding styles in `src/styles/7 - chatbox/`.
+
 
 ```
 src/
@@ -155,6 +164,9 @@ Relationships: products are independent documents; orders (if implemented) would
      VITE_FIREBASE_STORAGE_BUCKET=...
      VITE_FIREBASE_MSG_SENDER_ID=...
      VITE_FIREBASE_APP_ID=...
+     # If using third‑party chat service, include keys here (example):
+     # VITE_CHAT_API_ENDPOINT=https://...
+     # VITE_CHAT_API_KEY=...
      ```
 
 4. **Run the development server**
