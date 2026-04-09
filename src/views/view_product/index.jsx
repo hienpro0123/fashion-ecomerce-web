@@ -12,7 +12,9 @@ import {
 } from '@/hooks';
 import React, { useEffect, useRef, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import Select from 'react-select';
+import SelectModule from 'react-select';
+
+const Select = SelectModule?.default || SelectModule;
 
 const ViewProduct = () => {
   const { id } = useParams();

@@ -3,8 +3,10 @@ import { ImageLoader } from '@/components/common';
 import { displayMoney } from '@/helpers/utils';
 import PropType from 'prop-types';
 import React from 'react';
-import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
+import SkeletonModule, { SkeletonTheme } from 'react-loading-skeleton';
 import { useHistory } from 'react-router-dom';
+
+const Skeleton = SkeletonModule?.default || SkeletonModule;
 
 const ProductItem = ({ product, isItemOnBasket, addToBasket }) => {
   const history = useHistory();

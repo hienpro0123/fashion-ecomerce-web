@@ -2,7 +2,9 @@
 import { useField } from 'formik';
 import PropType from 'prop-types';
 import React from 'react';
-import CreatableSelect from 'react-select/creatable';
+import CreatableSelectModule from 'react-select/creatable';
+
+const CreatableSelect = CreatableSelectModule?.default || CreatableSelectModule;
 
 const CustomCreatableSelect = (props) => {
   const [field, meta, helpers] = useField(props);
