@@ -1,12 +1,16 @@
-import { CHECKOUT_STEP_1 } from '@/constants/routes';
+import { SHIPPING_FEE_VND } from '@/constants/constants';
+import { ACCOUNT, CHECKOUT_STEP_1 } from '@/constants/routes';
 import { Form, Formik } from 'formik';
 import { displayActionMessage } from '@/helpers/utils';
 import { useDocumentTitle, useScrollTop } from '@/hooks';
 import PropType from 'prop-types';
 import React from 'react';
-import { useDispatch } from 'react-redux';
-import { Redirect } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { Redirect, useHistory } from 'react-router-dom';
+import { clearBasket } from '@/redux/actions/basketActions';
 import { setPaymentDetails } from '@/redux/actions/checkoutActions';
+import { resetCheckout } from '@/redux/actions/checkoutActions';
+import firebase from '@/services/firebase';
 import * as Yup from 'yup';
 import { StepTracker } from '../components';
 import withCheckout from '../hoc/withCheckout';
@@ -47,10 +51,14 @@ const FormSchema = Yup.object().shape({
   type: Yup.string().required('Please select paymend mode')
 });
 
-const Payment = ({ shipping, payment, subtotal }) => {
+const Payment = ({
+  basket, profile, shipping, payment, subtotal
+}) => {
   useDocumentTitle('Check Out Final Step | LORDMEN');
   useScrollTop();
   const dispatch = useDispatch();
+  const history = useHistory();
+  const userId = useSelector((store) => store.auth.id);
 
   const initFormikValues = {
     name: payment.name || '',
@@ -60,10 +68,59 @@ const Payment = ({ shipping, payment, subtotal }) => {
     type: payment.type || 'paypal'
   };
 
-  const onConfirm = (values) => {
+  const onConfirm = async (values) => {
     const { cardnumber, ccv, ...rest } = values;
+    const shippingFee = shipping.isInternational ? SHIPPING_FEE_VND : 0;
 
     dispatch(setPaymentDetails({ ...rest }));
+
+    if (values.type === 'cod') {
+      const order = {
+        userId,
+        customer: {
+          fullname: shipping.fullname || profile.fullname || '',
+          email: shipping.email || profile.email || '',
+          address: shipping.address || profile.address || '',
+          mobile: shipping.mobile || profile.mobile || {}
+        },
+        items: basket.map((item) => ({
+          id: item.id,
+          name: item.name,
+          image: item.image,
+          price: item.price,
+          quantity: item.quantity,
+          selectedSize: item.selectedSize || '',
+          selectedColor: item.selectedColor || ''
+        })),
+        shipping: {
+          isInternational: shipping.isInternational,
+          shippingFee
+        },
+        payment: {
+          type: values.type,
+          label: 'Cash on Delivery'
+        },
+        pricing: {
+          subtotal,
+          shippingFee,
+          total: subtotal + shippingFee
+        },
+        status: 'pending',
+        createdAt: new Date().getTime()
+      };
+
+      try {
+        await firebase.saveOrder(order);
+        history.push(`${ACCOUNT}?tab=2`);
+        dispatch(clearBasket());
+        dispatch(resetCheckout());
+        displayActionMessage('COD order saved successfully.', 'success');
+      } catch (error) {
+        displayActionMessage(error?.message || 'Failed to save COD order.', 'error');
+      }
+      return;
+    }
+
     displayActionMessage(`Selected payment method: ${values.type.toUpperCase()}`, 'info');
   };
 
@@ -96,7 +153,18 @@ const Payment = ({ shipping, payment, subtotal }) => {
 };
 
 Payment.propTypes = {
+  basket: PropType.arrayOf(PropType.object).isRequired,
+  profile: PropType.shape({
+    fullname: PropType.string,
+    email: PropType.string,
+    address: PropType.string,
+    mobile: PropType.object
+  }).isRequired,
   shipping: PropType.shape({
+    fullname: PropType.string,
+    email: PropType.string,
+    address: PropType.string,
+    mobile: PropType.object,
     isDone: PropType.bool,
     isInternational: PropType.bool
   }).isRequired,

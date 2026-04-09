@@ -1,11 +1,12 @@
 import { displayActionMessage } from '@/helpers/utils';
 import OrdersList from '@/components/common/OrdersList';
+import { useDocumentTitle, useScrollTop } from '@/hooks';
 import firebase from '@/services/firebase';
 import React, { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
 
-const UserOrdersTab = () => {
-  const userId = useSelector((state) => state.auth.id);
+const Orders = () => {
+  useDocumentTitle('Orders | Admin');
+  useScrollTop();
   const [orders, setOrders] = useState([]);
   const [isLoading, setLoading] = useState(true);
 
@@ -28,12 +29,7 @@ const UserOrdersTab = () => {
   useEffect(() => {
     let isMounted = true;
 
-    if (!userId) {
-      setLoading(false);
-      return undefined;
-    }
-
-    firebase.getOrdersByUser(userId)
+    firebase.getOrders()
       .then((snapshot) => {
         if (!isMounted) return;
 
@@ -50,18 +46,19 @@ const UserOrdersTab = () => {
     return () => {
       isMounted = false;
     };
-  }, [userId]);
+  }, []);
 
   return (
     <OrdersList
-      emptyMessage="You don&apos;t have any orders"
+      emptyMessage="No orders found."
       isLoading={isLoading}
       onUpdateStatus={handleUpdateStatus}
       orders={orders}
-      role="user"
-      title="My Orders"
+      role="admin"
+      showCustomer
+      title="Orders"
     />
   );
 };
 
-export default UserOrdersTab;
+export default Orders;

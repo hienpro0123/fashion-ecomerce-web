@@ -8,6 +8,7 @@ const Dashboard = () => {
   return (
     <div className="loader">
       <h2>Welcome to admin dashboard</h2>
+      <span className="text-subtle">Use the Orders menu to review all customer orders.</span>
     </div>
   );
 };

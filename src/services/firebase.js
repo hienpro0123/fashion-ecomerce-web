@@ -83,6 +83,49 @@ class Firebase {
   updateProfile = (id, updates) =>
     this.db.collection("users").doc(id).update(updates);
 
+  getCurrentUserId = () => this.auth.currentUser?.uid || null;
+
+  saveOrder = (order) => {
+    const userId = order?.userId || this.getCurrentUserId();
+
+    if (!userId) {
+      return Promise.reject(new Error("You must be signed in to place an order."));
+    }
+
+    return this.db.collection("orders").add({
+      ...order,
+      userId
+    });
+  };
+
+  updateOrderStatus = async (orderId, status) => {
+    const userId = this.getCurrentUserId();
+
+    if (!userId) {
+      throw new Error("You must be signed in to update an order.");
+    }
+
+    const orderRef = this.db.collection("orders").doc(orderId);
+    const snapshot = await orderRef.get();
+
+    if (!snapshot.exists) {
+      throw new Error("Order not found.");
+    }
+
+    const order = snapshot.data();
+
+    if (!order?.userId) {
+      throw new Error("Order is missing a userId. Update the stored order data before changing its status.");
+    }
+
+    return orderRef.update({ status });
+  };
+
+  getOrdersByUser = (userId) =>
+    this.db.collection("orders").where("userId", "==", userId).get();
+
+  getOrders = () => this.db.collection("orders").get();
+
   onAuthStateChanged = () =>
     new Promise((resolve, reject) => {
       this.auth.onAuthStateChanged((user) => {

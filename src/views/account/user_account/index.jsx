@@ -1,6 +1,7 @@
 /* eslint-disable react/no-multi-comp */
 import { LoadingOutlined } from '@ant-design/icons';
 import { useDocumentTitle, useScrollTop } from '@/hooks';
+import PropType from 'prop-types';
 import React, { lazy, Suspense } from 'react';
 import UserTab from '../components/UserTab';
 
@@ -15,12 +16,15 @@ const Loader = () => (
   </div>
 );
 
-const UserAccount = () => {
+const UserAccount = ({ location }) => {
   useScrollTop();
   useDocumentTitle('My Account | LORDMEN');
+  const params = new URLSearchParams(location.search);
+  const requestedTab = Number(params.get('tab'));
+  const activeTab = [0, 1, 2].includes(requestedTab) ? requestedTab : undefined;
 
   return (
-    <UserTab>
+    <UserTab defaultActiveTab={activeTab}>
       <div index={0} label="Account">
         <Suspense fallback={<Loader />}>
           <UserAccountTab />
@@ -38,6 +42,12 @@ const UserAccount = () => {
       </div>
     </UserTab>
   );
+};
+
+UserAccount.propTypes = {
+  location: PropType.shape({
+    search: PropType.string
+  }).isRequired
 };
 
 export default UserAccount;
