@@ -1,243 +1,226 @@
 # Modern E-commerce Platform
 
-A full‑stack B2C/B2B online shopping application built with React and Firebase. This university project demonstrates a production‑quality front‑end user experience and an administrative dashboard, powered by Firebase services for authentication, data storage, and serverless functions. It also includes an AI‑powered chat assistant (Stylist AI) that helps users search for products using natural language.
+A React + Firebase e-commerce web app for menswear, with customer shopping flows, admin product/order management, and an AI stylist chat assistant.
 
 **Live Demo:**  
 https://fashion-ecomerce-web.vercel.app/
 
 ---
 
-## 📌 Introduction
+## Project Overview
 
-This project implements a modern e-commerce platform that allows customers to browse products, manage a shopping cart, and complete a secure checkout process. An administrator can manage the product catalogue, monitor users, and track basic sales information. The application solves the problem of providing a responsive, stateful web shop without requiring a traditional server backend by leveraging Firebase's cloud services.
+`LORDMEN` is a single-page ecommerce application built around 2 roles:
 
+- **Customer**: browse products, search/filter, add to basket, checkout, manage profile, view/cancel orders.
+- **Admin**: manage products and review/update customer orders.
 
----
+The app uses Firebase directly from the frontend:
 
-## 🛠️ Tech Stack
-
-| Category | Technologies | Purpose |
-|----------|--------------|---------|
-| **Frontend** | React 17, Vite | Component-driven UI and development tooling |
-| | Redux, Redux Saga, Redux Persist | Global state management and side effects |
-| | Custom AI‑chat logic | In-browser assistant built with streaming message rendering and backend calls to a chat service |
-| | React Router DOM | Client‑side routing |
-| | Formik & Yup | Form handling and validation |
-| | Ant Design Icons, react‑select, react‑modal | UI components & icons |
-| **Backend / Services** | Firebase Authentication | Email/password + OAuth providers (Google, Facebook, GitHub) |
-| | Firebase Cloud Firestore | NoSQL document database for users, products, etc. |
-| | Firebase Cloud Storage | Product image hosting |
-| | Firebase Cloud Functions | Serverless logic (e.g. lowercasing product names) |
-| **Styling** | SCSS (Sass) with custom SASS architecture | Responsive design and theming |
-| **Other** | Jest & Enzyme | Unit testing framework |
-| | Yarn | Package manager |
-
+- **Firebase Auth** for sign in / sign up / OAuth
+- **Cloud Firestore** for `users`, `products`, `orders`
+- **Cloud Storage** for product and profile images
+- **Cloud Functions** for product name normalization
+- **Gemini API** for the Stylist AI chat assistant
 
 ---
 
-## ✨ Key Features
+## Tech Stack
 
-### Customer Side
-
-* **AI Chat Assistant** – a floating bot widget in the bottom‑right corner that users can open to ask questions in Vietnamese or English; the assistant queries product data and returns recommendations with product cards.
-
-
-* **Product Browsing** – Grid and list views with pagination and featured/recommended sections.
-* **Search & Filter** – Full‑text and keyword search, price range, brand filters, sorting options. Chat assistant also supports natural‑language queries.
-* **Shopping Cart** – Add/remove items, persist basket in Firestore when signed in.
-* **Secure Checkout** – Three‑step process (summary, shipping, payment) with client‑side validation.
-* **User Profile** – View/edit profile, address, and mobile number; placeholder for order history.
-
-### Admin Dashboard
-
-* **Inventory Management** – Create, read, update, delete (CRUD) products, including images and metadata such as keywords, sizes, colors, featured/recommended flags.
-
-* **Chat widget administration** – Chat logic is purely client‑side; no admin controls exist but the code demonstrates extensible AI integration.
-* **User Management** – Promote normal users to admins by editing the Firestore role field.
-* **Order Tracking** – Placeholder component indicating where order tracking could be implemented.
-* **Revenue Analytics** – Basic subtotal calculations in the checkout flow; full analytics would be an extension.
-
+- **Frontend:** React 17, Vite, React Router DOM 5
+- **State management:** Redux, Redux Saga, Redux Persist
+- **Forms:** Formik, Yup
+- **UI:** SCSS, Ant Design Icons, react-select, react-modal
+- **Backend services:** Firebase Auth, Firestore, Storage, Cloud Functions
+- **AI integration:** Gemini API via `src/services/chatService.jsx`
+- **Testing:** Jest, Enzyme
 
 ---
 
-## 🗂️ Project Structure
+## Key Features
 
-The project follows a conventional React/Vite layout with logical separation by feature and utility. The chat widget sources live under `src/components/chatbox/*` and corresponding styles in `src/styles/7 - chatbox/`.
+### Customer Features
 
+- Home page with featured and recommended products
+- Product listing, detail page, search, filter, and sorting
+- Basket management with persistence for signed-in users
+- 3-step checkout flow
+- COD order creation
+- Account profile editing with avatar/banner upload
+- Order history with customer-side cancel for pending orders
+- AI stylist chatbox with product-aware recommendations
 
-```
-src/
-├─ components/          # Reusable components (basket, common UI, form controls)
-├─ constants/           # Route paths, action type constants
-├─ helpers/             # Utility functions (e.g. displayMoney)
-├─ hooks/               # Custom React hooks (useBasket, useModal, etc.)
-├─ redux/               # Actions, reducers, sagas, store configuration
-├─ routers/             # Route definitions & custom route components
-├─ services/            # Firebase wrapper and API helpers
-├─ styles/              # SCSS architecture (settings, tools, components, utils)
-├─ views/               # Page‑level components organized by feature (account, admin, checkout, home, etc.)
-└─ App.jsx, index.jsx   # Application entry points
-```
+### Admin Features
 
-Key files:
+- Product CRUD
+- Upload thumbnail and gallery images
+- Manage featured / recommended products
+- Review all customer orders
+- Update order status: `pending -> confirmed -> delivered`
 
-* `src/services/firebase.js` – abstraction over Firebase SDK; contains all Firestore and Auth calls.
-* `src/redux/sagas` – side‑effect logic connecting UI actions to Firebase operations.
-* `src/views/admin/components/ProductForm.jsx` – form used for both adding and editing products.
-* `functions/index.js` – Cloud Function that ensures `name_lower` field for search.
+### Current Limitations
 
-
----
-
-## 🧬 Database Schema
-
-**Collections:** `users`, `products` (additional `orders` may be added later).
-
-### User document
-
-```
-{
-  fullname: string,
-  avatar: string (URL),
-  banner: string (URL),
-  email: string,
-  address: string,
-  basket: array of product objects,
-  mobile: { country, countryCode, dialCode, value },
-  role: 'USER' | 'ADMIN',
-  dateJoined: timestamp
-}
-```
-
-Relationships: each user may have a `basket` array referencing product IDs and selected options; orders would reference user ID.
-
-### Product document
-
-```
-{
-  name: string,
-  name_lower: string,          // added by cloud function for case‑insensitive search
-  brand: string,
-  price: number,
-  maxQuantity: number,
-  description: string,
-  keywords: array<string>,
-  sizes: array<string>,
-  availableColors: array<string>,
-  image: string (URL),
-  imageCollection: array<{id:string,url:string}>,
-  quantity: number,
-  dateAdded: timestamp,
-  isFeatured: boolean,
-  isRecommended: boolean
-}
-```
-
-Relationships: products are independent documents; orders (if implemented) would store product snapshots or references.
-
+- Wish list tab is still a placeholder
+- Credit card / PayPal UI exists, but live payment gateway integration is not implemented
+- Admin dashboard is minimal, not a full analytics dashboard
 
 ---
 
-## 🚀 Installation & Setup
-
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/your‑username/ecommerce-react.git
-   cd ecommerce-react
-   ```
-
-2. **Install dependencies**
-   ```bash
-   yarn install
-   ```
-
-3. **Firebase project configuration**
-   * Create a Firebase project at https://console.firebase.google.com
-   * Enable **Authentication** (Email/Password + Google/Facebook/GitHub providers)
-   * Enable **Firestore** (start in test mode for development)
-   * Enable **Storage** (for product images)
-   * Copy your project's configuration and populate a `.env` file in the project root:
-     ```env
-     VITE_FIREBASE_API_KEY=...
-     VITE_FIREBASE_AUTH_DOMAIN=...
-     VITE_FIREBASE_DB_URL=...
-     VITE_FIREBASE_PROJECT_ID=...
-     VITE_FIREBASE_STORAGE_BUCKET=...
-     VITE_FIREBASE_MSG_SENDER_ID=...
-     VITE_FIREBASE_APP_ID=...
-     # If using third‑party chat service, include keys here (example):
-     # VITE_CHAT_API_ENDPOINT=https://...
-     # VITE_CHAT_API_KEY=...
-     ```
-
-4. **Run the development server**
-   ```bash
-   yarn dev
-   ```
-   The application will be available at `http://localhost:5173` (default Vite port).
-
-5. **Deploy (optional)**
-   * Build the static site: `yarn build`
-   * Host the contents of `dist/` on any static hosting service or use Firebase Hosting.
-   * Deploy Cloud Functions with `firebase deploy --only functions` if you wish to use the lowercase name trigger.
-
-6. **Admin setup**
-   * Register an account via `/signup`.
-   * In the Firestore console navigate to the `users` collection and change your document's `role` field from `USER` to `ADMIN`.
-   * Reload the site and the admin routes become available.
-
-
----
-
-## 🔗 API Endpoints (Firebase)
-
-Since this is a serverless application, there are no traditional REST endpoints. Instead, the client interacts directly with Firebase via the wrapper in `src/services/firebase.js`.
-
-| Action | Firestore Collection | Description |
-|--------|----------------------|-------------|
-| `addUser` | `users` | Create new user document on signup |
-| `getUser` | `users` | Fetch profile data |
-| `saveBasketItems` | `users` | Persist shopping cart |
-| `getProducts` | `products` | Paginated product list |
-| `searchProducts` | `products` | Keyword or name search |
-| `addProduct` / `editProduct` / `removeProduct` | `products` | Admin CRUD operations |
-
-A Cloud Function (`lowercaseProductName`) triggers on new product documents to populate the `name_lower` field.
-
-
----
-
-## 📊 User Purchase Flow
+## Main User Flow
 
 ```mermaid
 flowchart TD
-    A[Browse products] --> B{Search / Filter}
-    B --> C[Select product]
-    C --> D[Add to cart]
-    D --> E[View basket]
-    E --> F{Authenticated?}
-    F -- No --> G[Prompt to sign in / register]
-    G --> H[Sign in / create account]
-    H --> E
-    F -- Yes --> I[Proceed to checkout]
-    I --> J[Step 1: Order summary]
-    J --> K[Step 2: Shipping details]
-    K --> L[Step 3: Payment selection]
-    L --> M[Order confirmation / placeholder]
+    A[Open Home / Shop] --> B[Browse products]
+    B --> C[Search / Filter]
+    C --> D[View product detail]
+    D --> E[Select size / color]
+    E --> F[Add to basket]
+    F --> G[Review basket]
+    G --> H{Signed in?}
+    H -- No --> I[Sign in / Sign up]
+    I --> G
+    H -- Yes --> J[Checkout Step 1 - Summary]
+    J --> K[Checkout Step 2 - Shipping]
+    K --> L[Checkout Step 3 - Payment]
+    L --> M[Create COD order in Firestore]
+    M --> N[Go to My Orders]
 ```
 
+---
+
+## Order Flow
+
+```mermaid
+flowchart TD
+    A[Customer places COD order] --> B[Order saved in Firestore]
+    B --> C[Initial status: pending]
+    C --> D[Customer views My Orders]
+    C --> E[Admin views Admin Orders]
+    D --> F{Still pending?}
+    F -- Yes --> G[Customer cancels order]
+    G --> H[Status = cancelled]
+    E --> I[Admin confirms order]
+    I --> J[Status = confirmed]
+    J --> K[Admin marks delivered]
+    K --> L[Status = delivered]
+```
 
 ---
 
-## ✅ Usage Notes (for Academic Submission)
+## Project Structure
 
-* **Quality standards** – Codebase uses ESLint (Airbnb) and conforms to modular React architecture.
-* **Extensibility** – The skeleton supports extensions such as order persistence, analytics, and real payment gateway integration (Stripe/PayPal) in the checkout step.
-* **Testing** – Basic Jest/Enzyme configuration is included; tests reside in `test/` directory.
+```text
+src/
+|-- components/      # Reusable UI: basket, common, chatbox, product
+|-- constants/       # Routes and Redux constants
+|-- helpers/         # Utility helpers
+|-- hooks/           # Custom hooks
+|-- redux/           # Actions, reducers, sagas, store
+|-- routers/         # Public / client / admin route guards
+|-- selectors/       # Product filtering selectors
+|-- services/        # Firebase wrapper and AI chat service
+|-- styles/          # SCSS and chatbox styles
+|-- views/           # Page-level screens
+|-- App.jsx
+`-- index.jsx
+```
 
+### Important Files
+
+- `src/services/firebase.js` - Firebase Auth / Firestore / Storage wrapper
+- `src/services/chatService.jsx` - Gemini prompt + product ranking logic
+- `src/components/chatbox/ChatBox.jsx` - floating AI chat UI
+- `src/redux/sagas/authSaga.js` - auth flow
+- `src/redux/sagas/productSaga.js` - product loading / CRUD / search
+- `src/views/checkout/step3/index.jsx` - order creation
+- `src/views/account/components/UserOrdersTab.jsx` - customer orders
+- `src/views/admin/orders/index.jsx` - admin orders
 
 ---
 
-This README provides a comprehensive guide suitable for university project evaluation and demonstrates both technical competency and professional documentation practices.
+## Firestore Collections
 
+### `users`
+
+Stores:
+
+- profile info
+- basket
+- role (`USER` / `ADMIN`)
+
+### `products`
+
+Stores:
+
+- product info
+- price, sizes, colors
+- image + image collection
+- featured / recommended flags
+- normalized search fields such as `name_lower`
+
+### `orders`
+
+Stores:
+
+- `userId`
+- customer snapshot
+- ordered items
+- shipping info
+- payment info
+- pricing totals
+- status: `pending`, `confirmed`, `delivered`, `cancelled`
+
+---
+
+## Setup
+
+### 1. Install
+
+```bash
+npm install
+```
+
+or
+
+```bash
+yarn install
+```
+
+### 2. Environment Variables
+
+Create `.env`:
+
+```env
+VITE_FIREBASE_API_KEY=...
+VITE_FIREBASE_AUTH_DOMAIN=...
+VITE_FIREBASE_DB_URL=...
+VITE_FIREBASE_PROJECT_ID=...
+VITE_FIREBASE_STORAGE_BUCKET=...
+VITE_FIREBASE_MSG_SENDER_ID=...
+VITE_FIREBASE_APP_ID=...
+VITE_GEMINI_API_KEY=...
+VITE_GEMINI_MODELS=gemini-2.5-flash,gemini-2.0-flash
+```
+
+### 3. Enable Firebase Services
+
+- Authentication
+- Cloud Firestore
+- Cloud Storage
+- Cloud Functions
+
+### 4. Run locally
+
+```bash
+npm run dev
+```
+
+### 5. Make yourself admin
+
+After registering, update your Firestore `users/{uid}.role` to:
+
+```text
+ADMIN
+```
+
+---
 
