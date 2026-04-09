@@ -185,91 +185,42 @@ or
 yarn install
 ```
 
-3. **Firebase project configuration**
-   * Create a Firebase project at https://console.firebase.google.com
-   * Enable **Authentication** (Email/Password + Google/Facebook/GitHub providers)
-   * Enable **Firestore** (start in test mode for development)
-   * Enable **Storage** (for product images)
-   * Copy your project's configuration and populate a `.env` file in the project root:
-     ```env
-     VITE_FIREBASE_API_KEY=...
-     VITE_FIREBASE_AUTH_DOMAIN=...
-     VITE_FIREBASE_DB_URL=...
-     VITE_FIREBASE_PROJECT_ID=...
-     VITE_FIREBASE_STORAGE_BUCKET=...
-     VITE_FIREBASE_MSG_SENDER_ID=...
-     VITE_FIREBASE_APP_ID=...
-     # If using third‑party chat service, include keys here (example):
-     # VITE_CHAT_API_ENDPOINT=https://...
-     # VITE_CHAT_API_KEY=...
-     ```
+### 2. Environment Variables
 
-4. **Run the development server**
-   ```bash
-   yarn dev
-   ```
-   The application will be available at `http://localhost:5173` (default Vite port).
+Create `.env`:
 
-5. **Deploy (optional)**
-   * Build the static site: `yarn build`
-   * Host the contents of `dist/` on any static hosting service or use Firebase Hosting.
-   * Deploy Cloud Functions with `firebase deploy --only functions` if you wish to use the lowercase name trigger.
-
-6. **Admin setup**
-   * Register an account via `/signup`.
-   * In the Firestore console navigate to the `users` collection and change your document's `role` field from `USER` to `ADMIN`.
-   * Reload the site and the admin routes become available.
-
-
----
-
-## 🔗 API Endpoints (Firebase)
-
-Since this is a serverless application, there are no traditional REST endpoints. Instead, the client interacts directly with Firebase via the wrapper in `src/services/firebase.js`.
-
-| Action | Firestore Collection | Description |
-|--------|----------------------|-------------|
-| `addUser` | `users` | Create new user document on signup |
-| `getUser` | `users` | Fetch profile data |
-| `saveBasketItems` | `users` | Persist shopping cart |
-| `getProducts` | `products` | Paginated product list |
-| `searchProducts` | `products` | Keyword or name search |
-| `addProduct` / `editProduct` / `removeProduct` | `products` | Admin CRUD operations |
-
-A Cloud Function (`lowercaseProductName`) triggers on new product documents to populate the `name_lower` field.
-
-
----
-
-## 📊 User Purchase Flow
-
-```mermaid
-flowchart TD
-    A[Browse products] --> B{Search / Filter}
-    B --> C[Select product]
-    C --> D[Add to cart]
-    D --> E[View basket]
-    E --> F{Authenticated?}
-    F -- No --> G[Prompt to sign in / register]
-    G --> H[Sign in / create account]
-    H --> E
-    F -- Yes --> I[Proceed to checkout]
-    I --> J[Step 1: Order summary]
-    J --> K[Step 2: Shipping details]
-    K --> L[Step 3: Payment selection]
-    L --> M[Order confirmation / placeholder]
+```env
+VITE_FIREBASE_API_KEY=...
+VITE_FIREBASE_AUTH_DOMAIN=...
+VITE_FIREBASE_DB_URL=...
+VITE_FIREBASE_PROJECT_ID=...
+VITE_FIREBASE_STORAGE_BUCKET=...
+VITE_FIREBASE_MSG_SENDER_ID=...
+VITE_FIREBASE_APP_ID=...
+VITE_GEMINI_API_KEY=...
+VITE_GEMINI_MODELS=gemini-2.5-flash,gemini-2.0-flash
 ```
 
+### 3. Enable Firebase Services
+
+- Authentication
+- Cloud Firestore
+- Cloud Storage
+- Cloud Functions
+
+### 4. Run locally
+
+```bash
+npm run dev
+```
+
+### 5. Make yourself admin
+
+After registering, update your Firestore `users/{uid}.role` to:
+
+```text
+ADMIN
+```
 
 ---
-
-## ✅ Usage Notes (for Academic Submission)
-
-* **Quality standards** – Codebase uses ESLint (Airbnb) and conforms to modular React architecture.
-* **Extensibility** – The skeleton supports extensions such as order persistence, analytics, and real payment gateway integration (Stripe/PayPal) in the checkout step.
-* **Testing** – Basic Jest/Enzyme configuration is included; tests reside in `test/` directory.
-
-
----
-
 
