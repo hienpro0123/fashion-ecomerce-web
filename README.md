@@ -272,6 +272,4 @@ flowchart TD
 
 ---
 
-This README provides a comprehensive guide suitable for university project evaluation and demonstrates both technical competency and professional documentation practices.
-
 
