@@ -124,17 +124,6 @@ src/
 `-- index.jsx
 ```
 
-### Important Files
-
-- `src/services/firebase.js` - Firebase Auth / Firestore / Storage wrapper
-- `src/services/chatService.jsx` - Gemini prompt + product ranking logic
-- `src/components/chatbox/ChatBox.jsx` - floating AI chat UI
-- `src/redux/sagas/authSaga.js` - auth flow
-- `src/redux/sagas/productSaga.js` - product loading / CRUD / search
-- `src/views/checkout/step3/index.jsx` - order creation
-- `src/views/account/components/UserOrdersTab.jsx` - customer orders
-- `src/views/admin/orders/index.jsx` - admin orders
-
 ---
 
 ## Firestore Collections
