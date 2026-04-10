@@ -1,11 +1,14 @@
 {
   "compilerOptions": {
-    "jsx": "react",
-    "baseUrl": "src",
+    "jsx": "react-jsx",
+    "ignoreDeprecations": "6.0",
+    "lib": ["DOM", "DOM.Iterable", "ES2021"],
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"]
+    },
     "noUnusedLocals": true,
     "noUnusedParameters": true
   },
-  "include": [
-    "./src"
-  ]
+  "include": ["src"]
 }

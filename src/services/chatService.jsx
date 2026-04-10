@@ -8,7 +8,7 @@ const GEMINI_BASE_URL = "https://generativelanguage.googleapis.com/v1/models";
 // Danh sách model fallback, ưu tiên model nhẹ trước để giảm timeout.
 const MODEL_FALLBACK = Array.from(
   new Set(
-    String(import.meta.env.VITE_GEMINI_MODELS || "gemini-2.5-flash,gemini-2.0-flash")
+    String(import.meta.env.VITE_GEMINI_MODELS || "gemini-2.5-flash,gemini-2.5-flash-lite,gemini-3.1-flash-lite-preview")
       .split(",")
       .map((m) => m.trim())
       .filter(Boolean)
