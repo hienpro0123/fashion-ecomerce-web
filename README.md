@@ -5,6 +5,8 @@ A React + Firebase e-commerce web app for menswear, with customer shopping flows
 **Live Demo:**  
 https://fashion-ecomerce-web.vercel.app/
 
+![Demo Web](src/images/web.png)
+
 ---
 
 ## Project Overview
