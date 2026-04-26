@@ -4,6 +4,22 @@ import "firebase/firestore";
 import "firebase/storage";
 import firebaseConfig from "./config";
 
+const createProductDocSnapshot = (product) => ({
+  exists: Boolean(product),
+  data: () => product,
+  ref: {
+    id: product?.id
+  }
+});
+
+const createProductQuerySnapshot = (products = []) => ({
+  empty: products.length === 0,
+  docs: products.map(createProductDocSnapshot),
+  forEach: (callback) => {
+    products.forEach((product) => callback(createProductDocSnapshot(product)));
+  }
+});
+
 class Firebase {
   constructor() {
     app.initializeApp(firebaseConfig);
@@ -11,6 +27,61 @@ class Firebase {
     this.storage = app.storage();
     this.db = app.firestore();
     this.auth = app.auth();
+    this.backendUrl = import.meta.env.VITE_BACKEND_URL || "";
+  }
+
+  apiFetch = async (path, options = {}) => {
+    const {
+      method = "GET",
+      body,
+      params = {},
+      auth = ["POST", "PATCH", "DELETE"].includes(method)
+    } = options;
+    const normalizedBaseUrl = this.backendUrl.replace(/\/$/, "");
+    const baseUrl = normalizedBaseUrl.endsWith("/api")
+      ? normalizedBaseUrl
+      : `${normalizedBaseUrl}/api`;
+    const cleanPath = path.replace(/^\//, "");
+    const url = new URL(`${baseUrl}/${cleanPath}`);
+
+    Object.entries(params).forEach(([key, value]) => {
+      if (value !== undefined && value !== null && value !== "") {
+        url.searchParams.set(key, value);
+      }
+    });
+
+    const headers = {
+      "Content-Type": "application/json"
+    };
+
+    if (auth) {
+      const token = await this.auth.currentUser?.getIdToken();
+      if (token) headers.Authorization = `Bearer ${token}`;
+    }
+
+    const response = await fetch(url.toString(), {
+      method,
+      headers,
+      body: body ? JSON.stringify(body) : undefined
+    });
+    const data = await response.json().catch(() => ({}));
+
+    if (!response.ok) {
+      const error = new Error(data.message || "Backend request failed.");
+      error.status = response.status;
+      error.detail = data.detail;
+      throw error;
+    }
+
+    return data;
+  }
+
+  getLastKeyValue = (lastRefKey) => {
+    if (!lastRefKey) return null;
+    if (typeof lastRefKey === "string") return lastRefKey;
+    if (lastRefKey.id) return lastRefKey.id;
+    if (lastRefKey.ref?.id) return lastRefKey.ref.id;
+    return null;
   }
 
   // AUTH ACTIONS ------------
@@ -145,9 +216,31 @@ class Firebase {
 
   // // PRODUCT ACTIONS --------------
 
-  getSingleProduct = (id) => this.db.collection("products").doc(id).get();
+  getSingleProduct = async (id) => {
+    if (this.backendUrl) {
+      try {
+        const result = await this.apiFetch(`/products/${id}`, { auth: false });
+        return createProductDocSnapshot(result.product);
+      } catch (error) {
+        if (error.status === 404) return createProductDocSnapshot(null);
+        throw error;
+      }
+    }
+
+    return this.db.collection("products").doc(id).get();
+  };
 
   getProducts = (lastRefKey) => {
+    if (this.backendUrl) {
+      return this.apiFetch("/products", {
+        auth: false,
+        params: {
+          limit: 12,
+          after: this.getLastKeyValue(lastRefKey)
+        }
+      });
+    }
+
     let didTimeout = false;
 
     return new Promise((resolve, reject) => {
@@ -206,6 +299,16 @@ class Firebase {
   };
 
   searchProducts = (searchKey) => {
+    if (this.backendUrl) {
+      return this.apiFetch("/products", {
+        auth: false,
+        params: {
+          limit: 12,
+          search: searchKey
+        }
+      });
+    }
+
     // normalization helper: lowercase + strip diacritics
     const normalize = (str) => {
       if (!str) return '';
@@ -270,22 +373,59 @@ class Firebase {
     });
   };
 
-  getFeaturedProducts = (itemsCount = 12) =>
-    this.db
+  getFeaturedProducts = async (itemsCount = 12) => {
+    if (this.backendUrl) {
+      const result = await this.apiFetch("/products", {
+        auth: false,
+        params: {
+          limit: itemsCount,
+          featured: true
+        }
+      });
+
+      return createProductQuerySnapshot(result.products);
+    }
+
+    return this.db
       .collection("products")
       .where("isFeatured", "==", true)
       .limit(itemsCount)
       .get();
+  }
 
-  getRecommendedProducts = (itemsCount = 12) =>
-    this.db
+  getRecommendedProducts = async (itemsCount = 12) => {
+    if (this.backendUrl) {
+      const result = await this.apiFetch("/products", {
+        auth: false,
+        params: {
+          limit: itemsCount,
+          recommended: true
+        }
+      });
+
+      return createProductQuerySnapshot(result.products);
+    }
+
+    return this.db
       .collection("products")
       .where("isRecommended", "==", true)
       .limit(itemsCount)
       .get();
+  }
 
-  addProduct = (id, product) =>
-    this.db.collection("products").doc(id).set(product);
+  addProduct = (id, product) => {
+    if (this.backendUrl) {
+      return this.apiFetch("/products", {
+        method: "POST",
+        body: {
+          id,
+          product
+        }
+      });
+    }
+
+    return this.db.collection("products").doc(id).set(product);
+  }
 
   generateKey = () => this.db.collection("products").doc().id;
 
@@ -298,10 +438,26 @@ class Firebase {
 
   deleteImage = (id) => this.storage.ref("products").child(id).delete();
 
-  editProduct = (id, updates) =>
-    this.db.collection("products").doc(id).update(updates);
+  editProduct = (id, updates) => {
+    if (this.backendUrl) {
+      return this.apiFetch(`/products/${id}`, {
+        method: "PATCH",
+        body: updates
+      });
+    }
 
-  removeProduct = (id) => this.db.collection("products").doc(id).delete();
+    return this.db.collection("products").doc(id).update(updates);
+  }
+
+  removeProduct = (id) => {
+    if (this.backendUrl) {
+      return this.apiFetch(`/products/${id}`, {
+        method: "DELETE"
+      });
+    }
+
+    return this.db.collection("products").doc(id).delete();
+  }
 }
 
 const firebaseInstance = new Firebase();
