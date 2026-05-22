@@ -27,7 +27,7 @@ const BasketItemControl = ({ product }) => {
         onClick={onAddQty}
         type="button"
       >
-        <PlusOutlined style={{ fontSize: '9px' }} />
+        <PlusOutlined style={{ fontSize: '12px' }} />
       </button>
       <button
         className="button button-border button-border-gray button-small basket-control basket-control-minus"
@@ -35,7 +35,7 @@ const BasketItemControl = ({ product }) => {
         onClick={onMinusQty}
         type="button"
       >
-        <MinusOutlined style={{ fontSize: '9px' }} />
+        <MinusOutlined style={{ fontSize: '12px' }} />
       </button>
     </div>
   );

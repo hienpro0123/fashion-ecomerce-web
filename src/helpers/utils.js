@@ -1,4 +1,6 @@
 /* eslint-disable no-nested-ternary */
+const moneyFormatter = new Intl.NumberFormat('vi-VN');
+
 export const displayDate = (dateValue) => {
   if (!dateValue) return '';
 
@@ -29,19 +31,20 @@ export const displayDate = (dateValue) => {
   return `${monthNames[date.getMonth()]} ${date.getDate()}, ${date.getFullYear()}`;
 };
 
+export const toIntegerPrice = (value) => {
+  const amount = Number(value);
 
-export const displayMoney = (n) => {
-  // 👉 SỬA Ở ĐÂY: bỏ USD, bỏ .00
-  return new Intl.NumberFormat('vi-VN').format(n);
+  if (!Number.isFinite(amount)) return 0;
+
+  return Math.round(amount);
 };
+
+export const displayMoney = (n) => `${moneyFormatter.format(toIntegerPrice(n))} ₫`;
 
 export const calculateTotal = (arr) => {
   if (!arr || arr?.length === 0) return 0;
 
-  const total = arr.reduce((acc, val) => acc + val, 0);
-
-  // 👉 Nếu tổng tiền cũng không muốn .00
-  return total;
+  return arr.reduce((acc, val) => acc + toIntegerPrice(val), 0);
 };
 
 export const displayActionMessage = (msg, status = 'info') => {

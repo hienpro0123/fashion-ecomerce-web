@@ -1,7 +1,20 @@
 /* eslint-disable react/forbid-prop-types */
 import PropType from 'prop-types';
 import React from 'react';
-import { ProductItem } from '.';
+import ProductItem from './ProductItem';
+
+const SKELETON_KEYS = [
+  'admin-product-skeleton-1',
+  'admin-product-skeleton-2',
+  'admin-product-skeleton-3',
+  'admin-product-skeleton-4',
+  'admin-product-skeleton-5',
+  'admin-product-skeleton-6',
+  'admin-product-skeleton-7',
+  'admin-product-skeleton-8',
+  'admin-product-skeleton-9',
+  'admin-product-skeleton-10'
+];
 
 const ProductsTable = ({ filteredProducts }) => (
   <div>
@@ -25,11 +38,10 @@ const ProductsTable = ({ filteredProducts }) => (
         </div>
       </div>
     )}
-    {filteredProducts.length === 0 ? new Array(10).fill({}).map((product, index) => (
+    {filteredProducts.length === 0 ? SKELETON_KEYS.map((key) => (
       <ProductItem
-        // eslint-disable-next-line react/no-array-index-key
-        key={`product-skeleton ${index}`}
-        product={product}
+        key={key}
+        product={{}}
       />
     )) : filteredProducts.map((product) => (
       <ProductItem

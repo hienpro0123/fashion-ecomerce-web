@@ -259,7 +259,10 @@ const ProductForm = ({ product, onSubmit, isLoading }) => {
                     checked={values.isFeatured}
                     className=""
                     id="featured"
-                    onChange={(e) => setValues({ ...values, isFeatured: e.target.checked })}
+                    onChange={(e) => setValues((prevValues) => ({
+                      ...prevValues,
+                      isFeatured: e.target.checked
+                    }))}
                     type="checkbox"
                   />
                   <label htmlFor="featured">
@@ -273,7 +276,10 @@ const ProductForm = ({ product, onSubmit, isLoading }) => {
                     checked={values.isRecommended}
                     className=""
                     id="recommended"
-                    onChange={(e) => setValues({ ...values, isRecommended: e.target.checked })}
+                    onChange={(e) => setValues((prevValues) => ({
+                      ...prevValues,
+                      isRecommended: e.target.checked
+                    }))}
                     type="checkbox"
                   />
                   <label htmlFor="recommended">

@@ -1,5 +1,6 @@
 /* eslint-disable no-nested-ternary */
 import { CloseCircleOutlined } from '@ant-design/icons';
+import { displayMoney } from '@/helpers/utils';
 import PropType from 'prop-types';
 import React from 'react';
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
@@ -69,10 +70,9 @@ const ProductAppliedFilters = ({ filteredProductsCount }) => {
             <span className="d-block">Price Range</span>
             <div className="pill padding-right-l">
               <h5 className="pill-content margin-0">
-                $
-                {filter.minPrice}
-                - $
-                {filter.maxPrice}
+                {displayMoney(filter.minPrice)}
+                {' - '}
+                {displayMoney(filter.maxPrice)}
               </h5>
               <div
                 className="pill-remove"

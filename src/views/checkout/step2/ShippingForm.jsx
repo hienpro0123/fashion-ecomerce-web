@@ -1,5 +1,7 @@
 /* eslint-disable jsx-a11y/label-has-associated-control */
 import { CustomInput, CustomMobileInput } from '@/components/formik';
+import { SHIPPING_FEE_VND } from '@/constants/constants';
+import { displayMoney } from '@/helpers/utils';
 import { Field, useFormikContext } from 'formik';
 import React from 'react';
 
@@ -73,7 +75,7 @@ const ShippingForm = () => {
                       &nbsp; International Shipping &nbsp;
                       <span className="text-subtle">7-14 days</span>
                     </h5>
-                    <h4 className="margin-0">$50.00</h4>
+                    <h4 className="margin-0">{displayMoney(SHIPPING_FEE_VND)}</h4>
                   </label>
                 </div>
               </div>

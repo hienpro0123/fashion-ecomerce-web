@@ -2,7 +2,9 @@
 import { useField } from 'formik';
 import PropType from 'prop-types';
 import React from 'react';
-import CreatableSelect from 'react-select/creatable';
+import CreatableSelectModule from 'react-select/creatable';
+
+const CreatableSelect = CreatableSelectModule?.default || CreatableSelectModule;
 
 const CustomCreatableSelect = (props) => {
   const [field, meta, helpers] = useField(props);
@@ -12,7 +14,7 @@ const CustomCreatableSelect = (props) => {
   const { touched, error } = meta;
   const { setValue } = helpers;
 
-  const handleChange = (newValue) => {
+  const updateSelectedValue = (newValue) => {
     if (Array.isArray(newValue)) {
       const arr = newValue.map((fieldKey) => fieldKey.value);
       setValue(arr);
@@ -41,7 +43,7 @@ const CustomCreatableSelect = (props) => {
         isMulti={isMulti}
         placeholder={placeholder}
         name={field.name}
-        onChange={handleChange}
+        onChange={updateSelectedValue}
         onKeyDown={handleKeyDown}
         defaultValue={defaultValue}
         options={options}

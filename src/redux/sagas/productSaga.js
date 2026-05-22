@@ -31,10 +31,13 @@ const normalizeText = (value = '') => String(value)
 
 const buildKeywordTokens = (input = []) => {
   const raw = Array.isArray(input) ? input : [input];
-  const tokens = raw
-    .flatMap((item) => normalizeText(item).split(' '))
-    .map((t) => t.trim())
-    .filter(Boolean);
+  const tokens = raw.reduce((result, item) => {
+    normalizeText(item).split(' ').forEach((token) => {
+      const trimmedToken = token.trim();
+      if (trimmedToken) result.push(trimmedToken);
+    });
+    return result;
+  }, []);
   return Array.from(new Set(tokens));
 };
 

@@ -54,7 +54,7 @@ class Handle extends Component {
             position: 'absolute',
             transform: 'translate(-50%, -50%)',
             WebkitTapHighlightColor: 'rgba(0,0,0,0)',
-            zIndex: 400,
+            zIndex: 20,
             width: 26,
             height: 42,
             cursor: 'pointer',
@@ -72,13 +72,13 @@ class Handle extends Component {
           aria-valuemin={min}
           aria-valuemax={max}
           aria-valuenow={value}
-          label="Slider"
+          aria-label="Price range"
           style={{
             left: `${percent}%`,
             position: 'absolute',
             transform: 'translate(-50%, -50%)',
             WebkitTapHighlightColor: 'rgba(0,0,0,0)',
-            zIndex: 300,
+            zIndex: 10,
             width: 24,
             height: 24,
             border: 0,

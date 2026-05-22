@@ -1,4 +1,3 @@
-/* eslint-disable react/no-array-index-key */
 import { SearchOutlined } from '@ant-design/icons';
 import React, { useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -92,10 +91,10 @@ const SearchBar = () => {
                 Clear
               </h5>
             </div>
-            {filter.recent.map((item, index) => (
+            {filter.recent.map((item) => (
               <div
                 className="searchbar-recent-wrapper"
-                key={`search-${item}-${index}`}
+                key={`search-${item}`}
               >
                 <h5
                   className="searchbar-recent-keyword margin-0"

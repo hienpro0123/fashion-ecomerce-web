@@ -1,4 +1,5 @@
 import { ArrowLeftOutlined, CheckOutlined } from '@ant-design/icons';
+import { SHIPPING_FEE_VND } from '@/constants/constants';
 import { CHECKOUT_STEP_2 } from '@/constants/routes';
 import { useFormikContext } from 'formik';
 import { displayMoney } from '@/helpers/utils';
@@ -12,6 +13,7 @@ const Total = ({ isInternational, subtotal }) => {
   const { values, submitForm } = useFormikContext();
   const history = useHistory();
   const dispatch = useDispatch();
+  const shippingFee = isInternational ? SHIPPING_FEE_VND : 0;
 
   const onClickBack = () => {
     // destructure to only select left fields omitting cardnumber and ccv
@@ -26,7 +28,7 @@ const Total = ({ isInternational, subtotal }) => {
       <div className="basket-total text-right">
         <p className="basket-total-title">Total:</p>
         <h2 className="basket-total-amount">
-          {displayMoney(subtotal + (isInternational ? 50 : 0))}
+          {displayMoney(subtotal + shippingFee)}
         </h2>
       </div>
       <br />

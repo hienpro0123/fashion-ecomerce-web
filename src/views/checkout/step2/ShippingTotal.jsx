@@ -1,3 +1,4 @@
+import { SHIPPING_FEE_VND } from '@/constants/constants';
 import { useFormikContext } from 'formik';
 import { displayMoney } from '@/helpers/utils';
 import PropType from 'prop-types';
@@ -5,6 +6,7 @@ import React from 'react';
 
 const ShippingTotal = ({ subtotal }) => {
   const { values } = useFormikContext();
+  const shippingFee = values.isInternational ? SHIPPING_FEE_VND : 0;
 
   return (
     <div className="checkout-total d-flex-end padding-right-m">
@@ -18,7 +20,7 @@ const ShippingTotal = ({ subtotal }) => {
             </td>
             <td>
               <h4 className="basket-total-amount text-subtle text-right margin-0 ">
-                {values.isInternational ? '$50.00' : '$0.00'}
+                {displayMoney(shippingFee)}
               </h4>
             </td>
           </tr>
@@ -42,7 +44,7 @@ const ShippingTotal = ({ subtotal }) => {
             </td>
             <td>
               <h2 className="basket-total-amount text-right">
-                {displayMoney(Number(subtotal) + (values.isInternational ? 50 : 0))}
+                {displayMoney(subtotal + shippingFee)}
               </h2>
             </td>
           </tr>

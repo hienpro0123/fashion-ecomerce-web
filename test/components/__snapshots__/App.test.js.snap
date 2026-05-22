@@ -1,12 +1,32 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Should render App component 1`] = `
-<div>
-  <h1>
-    React Webpack Boilerplate
-  </h1>
-  <p>
-    Edit App component in src folder to get started.
-  </p>
-</div>
+<StrictMode>
+  <Provider
+    store={
+      Object {
+        "dispatch": [MockFunction],
+        "getState": [MockFunction],
+        "subscribe": [MockFunction],
+      }
+    }
+  >
+    <PersistGate
+      loading={<Preloader />}
+      persistor={
+        Object {
+          "flush": [MockFunction],
+          "getState": [MockFunction],
+          "pause": [MockFunction],
+          "persist": [MockFunction],
+          "purge": [MockFunction],
+          "subscribe": [MockFunction],
+        }
+      }
+    >
+      <Component />
+      <Component />
+    </PersistGate>
+  </Provider>
+</StrictMode>
 `;

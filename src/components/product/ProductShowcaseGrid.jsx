@@ -3,13 +3,14 @@ import { FeaturedProduct } from '@/components/product';
 import PropType from 'prop-types';
 import React from 'react';
 
+const SKELETON_KEYS = ['showcase-skeleton-1', 'showcase-skeleton-2', 'showcase-skeleton-3', 'showcase-skeleton-4'];
+
 const ProductShowcase = ({ products, skeletonCount }) => (
   <div className="product-display-grid">
-    {(products.length === 0) ? new Array(skeletonCount).fill({}).map((product, index) => (
+    {(products.length === 0) ? SKELETON_KEYS.slice(0, skeletonCount).map((key) => (
       <FeaturedProduct
-        // eslint-disable-next-line react/no-array-index-key
-        key={`product-skeleton ${index}`}
-        product={product}
+        key={key}
+        product={{}}
       />
     )) : products.map((product) => (
       <FeaturedProduct

@@ -7,12 +7,10 @@ const useFileHandler = (initState) => {
   const [isFileLoading, setFileLoading] = useState(false);
 
   const removeImage = ({ id, name }) => {
-    const items = imageFile[name].filter((item) => item.id !== id);
-
-    setImageFile({
-      ...imageFile,
-      [name]: items
-    });
+    setImageFile((prevImageFile) => ({
+      ...prevImageFile,
+      [name]: prevImageFile[name].filter((item) => item.id !== id)
+    }));
   };
 
   const onFileChange = (event, { name, type }) => {
@@ -45,10 +43,10 @@ const useFileHandler = (initState) => {
       const reader = new FileReader();
 
       reader.addEventListener('load', (e) => {
-        setImageFile({
-          ...imageFile,
+        setImageFile((prevImageFile) => ({
+          ...prevImageFile,
           [name]: { file: img, url: e.target.result }
-        });
+        }));
         setFileLoading(false);
       });
       reader.readAsDataURL(img);

@@ -57,7 +57,9 @@
   right: 24px !important;
   bottom: 24px !important;
   width: min(390px, calc(100vw - 20px));
-  height: min(610px, calc(100vh - 28px));
+  /* cap height to roughly 60-70% of viewport or about 550px */
+  height: min(70vh, 550px);
+  max-height: 70vh;
   border-radius: 16px;
   border: 1px solid var(--cb-border);
   background: linear-gradient(180deg, #f4f7ff 0%, #eef2ff 100%);
@@ -429,6 +431,7 @@
     right: 10px !important;
     bottom: 10px !important;
     width: calc(100vw - 20px);
-    height: min(600px, calc(100vh - 20px));
+    height: min(70vh, 550px, calc(100vh - 20px));
+    max-height: 70vh;
   }
 }

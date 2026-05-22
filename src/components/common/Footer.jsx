@@ -4,6 +4,8 @@ import { useLocation } from 'react-router-dom';
 import logoIUH from '../../../static/iuh.png';
 import logoGHN from '../../../static/ghn.webp';
 
+const currentYear = new Date().getFullYear();
+
 const Footer = () => {
   const { pathname } = useLocation();
 
@@ -87,7 +89,7 @@ const Footer = () => {
       </div> {/* ✅ ĐÓNG footer-container */}
 
       <div className="footer-bottom">
-        Copyright © {new Date().getFullYear()} LORDMEN.
+        Copyright © {currentYear} LORDMEN.
         All rights reserved.
       </div>
     </footer>

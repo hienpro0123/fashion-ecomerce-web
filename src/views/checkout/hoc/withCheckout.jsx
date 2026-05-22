@@ -1,4 +1,5 @@
 /* eslint-disable no-nested-ternary */
+import { SHIPPING_FEE_VND } from '@/constants/constants';
 import { SIGNIN } from '@/constants/routes';
 import { calculateTotal } from '@/helpers/utils';
 import React from 'react';
@@ -14,7 +15,7 @@ const withCheckout = (Component) => withRouter((props) => {
     profile: store.profile
   }));
 
-  const shippingFee = state.shipping.isInternational ? 50 : 0;
+  const shippingFee = state.shipping.isInternational ? SHIPPING_FEE_VND : 0;
   const subtotal = calculateTotal(state.basket.map((product) => product.price * product.quantity));
 
   if (!state.isAuth) {
@@ -30,7 +31,8 @@ const withCheckout = (Component) => withRouter((props) => {
         payment={state.payment}
         profile={state.profile}
         shipping={state.shipping}
-        subtotal={Number(subtotal + shippingFee)}
+        shippingFee={shippingFee}
+        subtotal={subtotal}
       />
     );
   }

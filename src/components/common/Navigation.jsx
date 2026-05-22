@@ -36,7 +36,7 @@ const Navigation = () => {
   };
 
   useEffect(() => {
-    window.addEventListener('scroll', scrollHandler);
+    window.addEventListener('scroll', scrollHandler, { passive: true });
     return () => window.removeEventListener('scroll', scrollHandler);
   }, []);
 

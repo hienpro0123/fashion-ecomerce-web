@@ -54,7 +54,7 @@ const PriceRange = ({
           readOnly
           value={state.inputMin}
         />
-        —
+        -
         <input
           className={inputClassName()}
           disabled={productsCount === 0}
