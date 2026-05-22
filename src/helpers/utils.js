@@ -1,4 +1,6 @@
 /* eslint-disable no-nested-ternary */
+const moneyFormatter = new Intl.NumberFormat('vi-VN');
+
 export const displayDate = (dateValue) => {
   if (!dateValue) return '';
 
@@ -37,7 +39,7 @@ export const toIntegerPrice = (value) => {
   return Math.round(amount);
 };
 
-export const displayMoney = (n) => `${new Intl.NumberFormat('vi-VN').format(toIntegerPrice(n))} ₫`;
+export const displayMoney = (n) => `${moneyFormatter.format(toIntegerPrice(n))} ₫`;
 
 export const calculateTotal = (arr) => {
   if (!arr || arr?.length === 0) return 0;

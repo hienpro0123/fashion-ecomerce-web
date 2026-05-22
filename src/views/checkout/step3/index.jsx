@@ -12,7 +12,7 @@ import { setPaymentDetails } from '@/redux/actions/checkoutActions';
 import { resetCheckout } from '@/redux/actions/checkoutActions';
 import firebase from '@/services/firebase';
 import * as Yup from 'yup';
-import { StepTracker } from '../components';
+import StepTracker from '../components/StepTracker';
 import withCheckout from '../hoc/withCheckout';
 import CODPayment from './CODPayment';
 import CreditPayment from './CreditPayment';

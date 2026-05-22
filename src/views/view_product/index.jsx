@@ -24,7 +24,7 @@ const ViewProduct = () => {
   useDocumentTitle(`View ${product?.name || 'Item'}`);
 
   const [selectedImage, setSelectedImage] = useState(product?.image || '');
-  const [selectedSize, setSelectedSize] = useState('');
+  const selectedSize = useRef('');
   const [selectedColor, setSelectedColor] = useState('');
 
   const {
@@ -40,7 +40,7 @@ const ViewProduct = () => {
   }, [product]);
 
   const onSelectedSizeChange = (newValue) => {
-    setSelectedSize(newValue.value);
+    selectedSize.current = newValue.value;
   };
 
   const onSelectedColorChange = (color) => {
@@ -51,14 +51,14 @@ const ViewProduct = () => {
   };
 
   const handleAddToBasket = () => {
-    addToBasket({ ...product, selectedColor, selectedSize: selectedSize || product.sizes[0] });
+    addToBasket({ ...product, selectedColor, selectedSize: selectedSize.current || product.sizes[0] });
   };
 
   return (
     <main className="content">
       {isLoading && (
         <div className="loader">
-          <h4>Loading Product...</h4>
+          <h4>Loading Product…</h4>
           <br />
           <LoadingOutlined style={{ fontSize: '3rem' }} />
         </div>

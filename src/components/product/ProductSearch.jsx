@@ -70,9 +70,8 @@ const ProductSearch = () => {
               Clear
             </h5>
           </div>
-          {filter.recent.map((item, index) => (
-            // eslint-disable-next-line react/no-array-index-key
-            <div className="pill-wrapper" key={`${item}${index}`}>
+          {filter.recent.map((item) => (
+            <div className="pill-wrapper" key={item}>
               <div className="pill padding-right-l">
                 <h5
                   className="pill-content margin-0"

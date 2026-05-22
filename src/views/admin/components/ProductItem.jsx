@@ -94,7 +94,7 @@ const ProductItem = ({ product }) => {
                 onClick={onCancelDelete}
                 type="button"
               >
-                No
+                Keep Product
               </button>
               &nbsp;
               <button
@@ -102,7 +102,7 @@ const ProductItem = ({ product }) => {
                 onClick={onConfirmDelete}
                 type="button"
               >
-                Yes
+                Delete Product
               </button>
             </div>
           </div>

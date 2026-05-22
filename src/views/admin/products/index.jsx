@@ -6,7 +6,7 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import { selectFilter } from '@/selectors/selector';
-import { ProductsNavbar } from '../components';
+import ProductsNavbar from '../components/ProductsNavbar';
 import ProductsTable from '../components/ProductsTable';
 
 const Products = () => {

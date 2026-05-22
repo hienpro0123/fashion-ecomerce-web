@@ -57,9 +57,10 @@ const listProducts = async () => {
 
   do {
     const url = new URL(`${baseUrl}/products`);
-    url.searchParams.set('key', apiKey);
-    url.searchParams.set('pageSize', '1000');
-    if (pageToken) url.searchParams.set('pageToken', pageToken);
+    const { searchParams } = url;
+    searchParams.set('key', apiKey);
+    searchParams.set('pageSize', '1000');
+    if (pageToken) searchParams.set('pageToken', pageToken);
 
     const data = await requestJson(url);
     products.push(...(data.documents || []).map(toProduct));

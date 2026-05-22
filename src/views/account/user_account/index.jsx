@@ -25,21 +25,21 @@ const UserAccount = ({ location }) => {
 
   return (
     <UserTab defaultActiveTab={activeTab}>
-      <div index={0} label="Account">
+      <UserTab.Panel index={0} label="Account">
         <Suspense fallback={<Loader />}>
           <UserAccountTab />
         </Suspense>
-      </div>
-      <div index={1} label="My Wish List">
+      </UserTab.Panel>
+      <UserTab.Panel index={1} label="My Wish List">
         <Suspense fallback={<Loader />}>
           <UserWishListTab />
         </Suspense>
-      </div>
-      <div index={2} label="My Orders">
+      </UserTab.Panel>
+      <UserTab.Panel index={2} label="My Orders">
         <Suspense fallback={<Loader />}>
           <UserOrdersTab />
         </Suspense>
-      </div>
+      </UserTab.Panel>
     </UserTab>
   );
 };

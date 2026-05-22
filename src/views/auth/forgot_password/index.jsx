@@ -1,6 +1,6 @@
 import { CheckOutlined, LoadingOutlined } from '@ant-design/icons';
-import { useDidMount, useDocumentTitle, useScrollTop } from '@/hooks';
-import React, { useEffect, useState } from 'react';
+import { useDocumentTitle, useScrollTop } from '@/hooks';
+import React, { useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { resetPassword } from '@/redux/actions/authActions';
 
@@ -10,33 +10,24 @@ const ForgotPassword = () => {
     authStatus: state.app.authStatus
   }));
   const dispatch = useDispatch();
-  const didMount = useDidMount();
-  const [forgotPWStatus, setForgotPWStatus] = useState({});
-  const [isSendingForgotPWRequest, setIsSending] = useState(false);
-  const [field, setField] = useState({});
+  const field = useRef({});
 
   useScrollTop();
   useDocumentTitle('Forgot Password | LORDMEN');
-  useEffect(() => {
-    if (didMount) {
-      setForgotPWStatus(authStatus);
-      setIsSending(isAuthenticating);
-    }
-  }, [authStatus, isAuthenticating]);
 
-  const onEmailChange = (value, error) => {
-    setField({ email: value, error });
+  const onEmailChange = (e) => {
+    field.current = { email: e.target.value, error: '' };
   };
 
   const onSubmitEmail = () => {
-    if (!!field.email && !field.error) {
-      dispatch(resetPassword(field.email));
+    if (!!field.current.email && !field.current.error) {
+      dispatch(resetPassword(field.current.email));
     }
   };
 
   return (
     <div className="forgot_password">
-      {forgotPWStatus?.message && (
+      {authStatus?.message && (
         <h5 className={`text-center ${authStatus?.success ? 'toast-success' : 'toast-error'}`}>
           {authStatus.message}
         </h5>
@@ -45,14 +36,12 @@ const ForgotPassword = () => {
       <p>Enter your email address and we will send you a password reset email.</p>
       <br />
       <input
-        field="email"
         required
         className="input-form"
-        label="* Email"
         maxLength={40}
         onChange={onEmailChange}
         placeholder="Enter your email"
-        readOnly={isSendingForgotPWRequest || authStatus?.success}
+        readOnly={isAuthenticating || authStatus?.success}
         type="email"
         style={{ width: '100%' }}
       />
@@ -60,13 +49,13 @@ const ForgotPassword = () => {
       <br />
       <button
         className="button w-100-mobile"
-        disabled={isSendingForgotPWRequest || authStatus?.success}
+        disabled={isAuthenticating || authStatus?.success}
         onClick={onSubmitEmail}
         type="button"
       >
-        {isSendingForgotPWRequest ? <LoadingOutlined /> : <CheckOutlined />}
+        {isAuthenticating ? <LoadingOutlined /> : <CheckOutlined />}
         &nbsp;
-        {isSendingForgotPWRequest ? 'Sending Password Reset Email' : 'Send Password Reset Email'}
+        {isAuthenticating ? 'Sending Password Reset Email' : 'Send Password Reset Email'}
       </button>
     </div>
   );

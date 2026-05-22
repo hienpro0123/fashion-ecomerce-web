@@ -23,14 +23,13 @@ self.addEventListener("activate", function (event) {
 		caches.keys().then(function (cacheNames) {
 			let validCacheSet = new Set(Object.values(currentCacheNames));
 			return Promise.all(
-				cacheNames
-					.filter(function (cacheName) {
-						return !validCacheSet.has(cacheName);
-					})
-					.map(function (cacheName) {
+				cacheNames.reduce(function (deletePromises, cacheName) {
+					if (!validCacheSet.has(cacheName)) {
 						console.log("deleting cache", cacheName);
-						return caches.delete(cacheName);
-					})
+						deletePromises.push(caches.delete(cacheName));
+					}
+					return deletePromises;
+				}, [])
 			);
 		})
 	);

@@ -71,7 +71,7 @@ const OrdersList = ({
   return (
     <div className="loader" style={{ minHeight: '80vh', alignItems: 'stretch' }}>
       <h3>{title}</h3>
-      {isLoading && <span className="text-subtle">Loading orders...</span>}
+      {isLoading && <span className="text-subtle">Loading orders…</span>}
       {!isLoading && orders.length === 0 && (
         <strong><span className="text-subtle">{emptyMessage}</span></strong>
       )}

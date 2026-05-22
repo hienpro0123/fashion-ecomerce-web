@@ -9,8 +9,10 @@ const app = express();
 const port = process.env.PORT || 5000;
 const allowedOrigins = (process.env.CLIENT_ORIGIN || '')
   .split(',')
-  .map((origin) => origin.trim())
-  .filter(Boolean);
+  .reduce((origins, origin) => {
+    const trimmedOrigin = origin.trim();
+    return trimmedOrigin ? [...origins, trimmedOrigin] : origins;
+  }, []);
 const isLocalOrigin = (origin) => /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(origin);
 
 app.use(cors({

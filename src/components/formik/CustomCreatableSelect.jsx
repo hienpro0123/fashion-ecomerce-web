@@ -14,7 +14,7 @@ const CustomCreatableSelect = (props) => {
   const { touched, error } = meta;
   const { setValue } = helpers;
 
-  const handleChange = (newValue) => {
+  const updateSelectedValue = (newValue) => {
     if (Array.isArray(newValue)) {
       const arr = newValue.map((fieldKey) => fieldKey.value);
       setValue(arr);
@@ -43,7 +43,7 @@ const CustomCreatableSelect = (props) => {
         isMulti={isMulti}
         placeholder={placeholder}
         name={field.name}
-        onChange={handleChange}
+        onChange={updateSelectedValue}
         onKeyDown={handleKeyDown}
         defaultValue={defaultValue}
         options={options}

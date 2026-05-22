@@ -15,7 +15,7 @@ const PayPalPayment = () => {
             name="type"
             onChange={(e) => {
               if (e.target.checked) {
-                setValues({ ...values, type: 'paypal' });
+                setValues((prevValues) => ({ ...prevValues, type: 'paypal' }));
               }
             }}
             type="radio"

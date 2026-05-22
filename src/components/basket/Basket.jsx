@@ -10,6 +10,12 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useHistory, useLocation } from 'react-router-dom';
 import { clearBasket } from '@/redux/actions/basketActions';
 
+const getBasketItemKey = (product) => [
+  product.id,
+  product.selectedSize || 'default-size',
+  product.selectedColor || 'default-color'
+].join('_');
+
 const Basket = () => {
   const { isOpenModal, onOpenModal, onCloseModal } = useModal();
   const { basket, user } = useSelector((state) => ({
@@ -116,10 +122,9 @@ const Basket = () => {
               <h5 className="basket-empty-msg">Your basket is empty</h5>
             </div>
           )}
-          {basket.map((product, i) => (
+          {basket.map((product) => (
             <BasketItem
-              // eslint-disable-next-line react/no-array-index-key
-              key={`${product.id}_${i}`}
+              key={getBasketItemKey(product)}
               product={product}
               basket={basket}
               dispatch={dispatch}

@@ -15,7 +15,7 @@ const CODPayment = () => {
             name="type"
             onChange={(e) => {
               if (e.target.checked) {
-                setValues({ ...values, type: 'cod' });
+                setValues((prevValues) => ({ ...prevValues, type: 'cod' }));
               }
             }}
             type="radio"

@@ -27,7 +27,11 @@ const normalizeKeyword = (value) => String(value || '').trim().toLowerCase();
 
 const buildKeywords = (keywords) => {
   if (!Array.isArray(keywords)) return [];
-  const normalized = keywords.map(normalizeKeyword).filter(Boolean);
+  const normalized = keywords.reduce((result, keyword) => {
+    const normalizedKeyword = normalizeKeyword(keyword);
+    if (normalizedKeyword) result.push(normalizedKeyword);
+    return result;
+  }, []);
   return Array.from(new Set(normalized));
 };
 

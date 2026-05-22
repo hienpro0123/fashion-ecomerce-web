@@ -12,7 +12,7 @@ const CustomMobileInput = (props) => {
   const { touched, error } = meta;
   const { setValue } = helpers;
 
-  const handleChange = (value, data) => {
+  const updateMobileValue = (value, data) => {
     const mob = {
       dialCode: data.dialCode,
       countryCode: data.countryCode,
@@ -38,7 +38,7 @@ const CustomMobileInput = (props) => {
           border: touched && error ? '1px solid red' : '1px solid #cacaca'
         }}
         inputExtraProps={{ required: true }}
-        onChange={handleChange}
+        onChange={updateMobileValue}
         placeholder={placeholder}
         value={defaultValue.value}
       />
